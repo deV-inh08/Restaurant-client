@@ -37,7 +37,7 @@ export class HttpError extends Error {
             message = 'Error HTTP'
         }: {
             status: number
-            payload: any
+            payload?: any
             message?: string
         }
     ) {
@@ -190,8 +190,8 @@ const http = {
     get(url: string, options?: Omit<CustomOptions, 'body'> | undefined) {
         return request("GET", url, options)
     },
-    post(url: string, body: any, options?: Omit<CustomOptions, 'body'> | undefined) {
-        return request('POST', url, { ...options, body })
+    post<Response>(url: string, body: any, options?: Omit<CustomOptions, 'body'> | undefined) {
+        return request<Response>('POST', url, { ...options, body })
     },
     put<Response>(
         url: string,

@@ -1,4 +1,8 @@
 import { z } from 'zod'
+import { loadEnvConfig } from '@next/env'
+
+const projectDir = process.cwd()
+loadEnvConfig(projectDir)
 
 // type schema '.env'
 const configSchema = z.object({
@@ -12,7 +16,7 @@ const configProject = configSchema.safeParse({
 })
 
 if (!configProject.success) {
-    console.error(configProject.error)
+    console.log(configProject.error)
     throw new Error('Các biến môi trường không hợp lệ')
 }
 
