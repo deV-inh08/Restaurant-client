@@ -9,7 +9,6 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-
 // remove symbol '/' of path
 export const normalizePath = (path: string) => {
   return path.startsWith('/') ? path.slice(1) : path
@@ -33,4 +32,15 @@ export const handleErrorApi = ({
   } else {
     toast(error?.payload?.message ?? 'Lỗi không xác định')
   }
+}
+
+// check in client
+const isBrowser = typeof window !== undefined
+
+export const getAccessTokenFromLocalStorage = () => {
+  return isBrowser ? localStorage.getItem('accessToken') : null
+}
+
+export const getRefreshTokenFromLocalStorage = () => {
+  return isBrowser ? localStorage.getItem('refreshToken') : null
 }
