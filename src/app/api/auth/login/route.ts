@@ -1,52 +1,48 @@
-import authApiRequest from "@/apiRequests/auth";
-import { LoginBodyType } from "@/schema/auth.schema";
-import { cookies } from "next/headers";
+import authApiRequest from "@/apiRequests/auth"
+import { LoginBodyType } from "@/schema/auth.schema"
+import { cookies } from "next/headers"
 import jwt from 'jsonwebtoken'
-import { HttpError } from "@/lib/http";
+import { HttpError } from "@/lib/http"
 
 /**
- * @param request 
- * @returns 
+ * Flow: Next client -> Next Server(proxy) -> Main Server
  * 
- * Flow Chart:
- * 
- * Next Client => User fill (email, password)
- * Next Client send 'UserForm' to Next Server
- * Next Server receive 'UserForm' from Next Client
- * After, Next Server request with 'UserForm' to Main Server
- * Next Server have 'data' from Main Server (accessToken, refreshToken)
- * Next Server decoded  'accessToken', 'refreshToken' to get 'expires'
- * After set cookie to Client (client.com)
+ * Next Client -> (request) with data (email, password) -> Next Server 
+ * Next Server receipt 'data' (email, password) -> (request) -> Main Server
+ * Main Server -> return for Next Server (payload)
+ * Next get payload (token) -> Set cookie (Client)
  */
 
+type decodedToken = {
+    userId: number;
+    role: string;
+    tokenType: string;
+    iat: number;
+    exp: number;
+}
 
-export async function POST(request: Request) {
+export const POST = async (request: Request) => {
     const body = (await request.json()) as LoginBodyType
-    // GET cookei & SET cookie
     const cookieStore = await cookies()
     try {
-        // handle Login next server => main server
-        const { payload } = await authApiRequest.serverLogin(body)
-        const { accessToken, refreshToken } = payload.data
-        const decodedAccessToken = jwt.decode(accessToken) as { exp: number }
-        const decodedRefreshToken = jwt.decode(refreshToken) as { exp: number }
-        // set cookie
+        const res = await authApiRequest.serverLogin(body)
+        const { accessToken, refreshToken } = res.payload.data
+        const decodedAccessToken = jwt.decode(accessToken) as decodedToken
+        const decodedRefreshToken = jwt.decode(refreshToken) as decodedToken
         cookieStore.set('accessToken', accessToken, {
-            path: '/',
             httpOnly: true,
+            expires: decodedAccessToken.exp,
             sameSite: 'lax',
             secure: true,
-            expires: decodedAccessToken.exp * 1000
+
         })
         cookieStore.set('refreshToken', refreshToken, {
-            path: '/',
             httpOnly: true,
+            expires: decodedRefreshToken.exp,
             sameSite: 'lax',
             secure: true,
-            expires: decodedRefreshToken.exp * 1000
         })
-        // response payload
-        return Response.json(payload)
+        return Response.json(res.payload)
     } catch (error) {
         if (error instanceof HttpError) {
             return Response.json(error.payload, {
@@ -59,4 +55,4 @@ export async function POST(request: Request) {
             })
         }
     }
-}
+} 

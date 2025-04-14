@@ -9,8 +9,8 @@ import { Form, FormField, FormItem, FormMessage } from '@/components/ui/form'
 import { LoginBodyType, LoginBodySchema } from '@/schema/auth.schema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useLoginMutation } from '@/queries/useAuth'
-import { toast } from 'sonner'
 import { handleErrorApi } from '@/lib/utils'
+import { toast } from 'sonner'
 
 export default function LoginForm() {
     const loginMutation = useLoginMutation()
@@ -24,12 +24,11 @@ export default function LoginForm() {
 
     const onSubmit = async (data: LoginBodyType) => {
         try {
-            // handle Login
             const res = await loginMutation.mutateAsync(data)
             if (res.payload) {
                 toast.success(res.payload.message)
             }
-        } catch (error: any) {
+        } catch (error) {
             handleErrorApi({ error, setError: form.setError })
         }
     }
@@ -42,8 +41,8 @@ export default function LoginForm() {
             </CardHeader>
             <CardContent>
                 <Form {...form}>
-                    <form className='space-y-2 max-w-[600px] flex-shrink-0 w-full' noValidate onSubmit={form.handleSubmit(onSubmit, (err) => {
-                        console.warn(err)
+                    <form className='space-y-2 max-w-[600px] flex-shrink-0 w-full' noValidate onSubmit={form.handleSubmit(onSubmit, (error) => {
+                        console.warn(error)
                     })}>
                         <div className='grid gap-4'>
                             <FormField
