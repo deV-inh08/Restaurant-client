@@ -19,6 +19,7 @@ import { HttpError } from "@/lib/http";
  * After set cookie to Client (client.com)
  */
 
+
 export async function POST(request: Request) {
     const body = (await request.json()) as LoginBodyType
     // GET cookei & SET cookie

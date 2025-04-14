@@ -1,4 +1,4 @@
-import http from "@/lib/http";
+import { http } from "@/lib/http";
 import { LoginBodyType, LoginResponseType, LogoutBodyType } from "@/schema/auth.schema";
 
 const authApiRequest = {
