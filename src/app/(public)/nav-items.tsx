@@ -27,19 +27,17 @@ const menuItems = [
 
 export default function NavItems({ className }: { className?: string }) {
     const [isAuth, setIsAuth] = useState(false)
+    const visibleItems = menuItems.filter((item) => {
+        if (item.authRequired === false && isAuth) return false
+        if (item.authRequired === true && !isAuth) return false
+        return true
+    })
     useEffect(() => {
         setIsAuth(Boolean(getAccessTokenFromLocalStorage()))
     }, [])
-    return menuItems.map((item) => {
-        if (
-            (item.authRequired === false && isAuth) ||
-            (item.authRequired === true && !isAuth)) {
-            return null
-        }
-        return (
-            <Link href={item.href} key={item.href} className={className}>
-                {item.title}
-            </Link>
-        )
-    })
+    return visibleItems.map((item) => (
+        <Link href={item.href} key={item.href} className={className}>
+            {item.title}
+        </Link>
+    ))
 }

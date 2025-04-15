@@ -10,6 +10,9 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
+import { useLogoutMutation } from '@/queries/useAuth'
+import { getRefreshTokenFromLocalStorage } from '@/lib/utils'
+import { toast } from 'sonner'
 
 const account = {
   name: 'Nguyễn Văn A',
@@ -17,6 +20,16 @@ const account = {
 }
 
 export default function DropdownAvatar() {
+  const refreshToken = getRefreshTokenFromLocalStorage() as string
+  const useLogout = useLogoutMutation()
+  const onClick = async () => {
+    const res = await useLogout.mutateAsync({ refreshToken })
+    localStorage.removeItem('accessToken')
+    localStorage.removeItem('refreshToken')
+    if (res.payload) {
+      toast.success(res.payload.message)
+    }
+  }
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -37,7 +50,7 @@ export default function DropdownAvatar() {
         </DropdownMenuItem>
         <DropdownMenuItem>Hỗ trợ</DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>Đăng xuất</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => onClick()}>Đăng xuất</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   )

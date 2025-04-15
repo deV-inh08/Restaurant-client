@@ -31,16 +31,16 @@ export const POST = async (request: Request) => {
         const decodedRefreshToken = jwt.decode(refreshToken) as decodedToken
         cookieStore.set('accessToken', accessToken, {
             httpOnly: true,
-            expires: decodedAccessToken.exp,
+            expires: decodedAccessToken.exp * 1000,
             sameSite: 'lax',
-            secure: true,
+            // secure: true -> Cookie chỉ được gửi qua HTTPS.
 
         })
         cookieStore.set('refreshToken', refreshToken, {
             httpOnly: true,
-            expires: decodedRefreshToken.exp,
+            expires: decodedRefreshToken.exp * 1000,
             sameSite: 'lax',
-            secure: true,
+            // secure: true -> Cookie chỉ được gửi qua HTTPS.
         })
         return Response.json(res.payload)
     } catch (error) {
@@ -55,4 +55,4 @@ export const POST = async (request: Request) => {
             })
         }
     }
-} 
+}

@@ -35,7 +35,7 @@ export const handleErrorApi = ({
 }
 
 // check in client
-const isBrowser = typeof window !== undefined
+const isBrowser = typeof window !== 'undefined'
 
 export const getAccessTokenFromLocalStorage = () => {
   return isBrowser ? localStorage.getItem('accessToken') : null

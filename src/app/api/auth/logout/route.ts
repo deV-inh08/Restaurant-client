@@ -1,42 +1,37 @@
-import authApiRequest from "@/apiRequests/auth"
-import { cookies } from "next/headers"
-
-export async function POST() {
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import authApiRequest from "@/apiRequests/auth";
+import type { NextRequest } from "next/server";
+import { cookies } from "next/headers";
+export const POST = async (request: NextRequest) => {
     const cookieStore = await cookies()
-    const accessToken = (cookieStore.get('accessToken')?.value) as string
-    const refreshToken = (cookieStore.get('refreshToken')?.value) as string
-
+    // get token from next client -> (request) -> next server
+    const accessToken = request.cookies.get('accessToken')?.value as string
+    const refreshToken = request.cookies.get('refreshToken')?.value as string
     if (!accessToken || !refreshToken) {
         return Response.json({
-            message: 'accessToken & refreshToken invalid',
-        }, {
-            status: 200
-        })
+            message: 'Không nhận được access token hoặc refresh token'
+        },
+            {
+                status: 200
+            })
     }
-    /**
-     * if have accessToken & refreshToken
-     * + Request API logout from Next Server -> Main server 
-     * body: { refreshToken: string }
-     * In Main Server receipt 'headers' => { Authorization: Bearer Token (accessToken) }
-     */
+    // next server -> request -> main server (refresh token & server don't auto send cookie)
     try {
-        const res = await authApiRequest.serverLogout({ refreshToken, accessToken })
-        // delete cookie in Next Server
+        const res = await authApiRequest.serverLogout({ accessToken: accessToken.trim(), refreshToken: refreshToken.trim() })
         cookieStore.delete('accessToken')
         cookieStore.delete('refreshToken')
         return Response.json(res.payload, {
             status: 200
         })
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
-        // delete cookie in Next Server
-        cookieStore.delete('accessToken')
-        cookieStore.delete('refreshToken')
-        return Response.json({
-            message: 'Lỗi khi gọi API đến server backend, buộc phải xóa cookie'
-        }, {
-            status: 200
-        })
+        return Response.json(
+            {
+                message: 'Lỗi khi gọi API đến server backend'
+            },
+            {
+                status: 200
+            }
+        )
     }
-}
 
+}

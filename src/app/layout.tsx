@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
 import AppProvider from "@/components/app-providers";
+import { Toaster } from "sonner";
 
 const fontSans = FontSans({
   variable: "--font-sans",
@@ -41,7 +42,7 @@ export default function RootLayout({
             disableTransitionOnChange>
             {children}
           </ThemeProvider>
-
+          <Toaster></Toaster>
         </AppProvider>
       </body>
     </html>
