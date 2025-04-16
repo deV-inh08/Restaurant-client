@@ -11,16 +11,14 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { useLogoutMutation } from '@/queries/useAuth'
-import { getRefreshTokenFromLocalStorage } from '@/lib/utils'
+import { getAccessTokenFromLocalStorage, getRefreshTokenFromLocalStorage } from '@/lib/utils'
 import { toast } from 'sonner'
+import { useAccountProfile } from '@/queries/useAccount'
 
-const account = {
-  name: 'Nguyễn Văn A',
-  avatar: 'https://i.pravatar.cc/150'
-}
 
 export default function DropdownAvatar() {
   const refreshToken = getRefreshTokenFromLocalStorage() as string
+  const accessToken = getAccessTokenFromLocalStorage() as string
   const useLogout = useLogoutMutation()
   const onClick = async () => {
     const res = await useLogout.mutateAsync({ refreshToken })
@@ -30,18 +28,21 @@ export default function DropdownAvatar() {
       toast.success(res.payload.message)
     }
   }
+  // get me
+  const { data } = useAccountProfile(accessToken)
+  const account = data?.payload.data
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant='outline' size='icon' className='overflow-hidden rounded-full'>
           <Avatar>
-            <AvatarImage src={account.avatar ?? undefined} alt={account.name} />
-            <AvatarFallback>{account.name.slice(0, 2).toUpperCase()}</AvatarFallback>
+            <AvatarImage src={account?.avatar ?? undefined} alt={account?.name} />
+            <AvatarFallback>{account?.name.slice(0, 2).toUpperCase()}</AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align='end'>
-        <DropdownMenuLabel>{account.name}</DropdownMenuLabel>
+        <DropdownMenuLabel>{account?.name}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
           <Link href={'/manage/setting'} className='cursor-pointer'>
