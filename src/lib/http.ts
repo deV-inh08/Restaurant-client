@@ -67,7 +67,7 @@ export class EntityError extends HttpError {
  * params: method, url, option
  * */
 
-const isClient = typeof window !== 'undefined'
+const isClient = () => typeof window !== 'undefined'
 
 export async function request<Response>(
     method: 'GET' | 'POST' | 'PUT' | 'DELETE',
@@ -96,6 +96,12 @@ export async function request<Response>(
         [key: string]: string
     } = body instanceof FormData ? {} : {
         'Content-Type': 'application/json'
+    }
+    if (isClient()) {
+        const accessToken = localStorage.getItem('accessToken')
+        if (accessToken) {
+            baseHeaders.Authorization = `Bearer ${accessToken}`
+        }
     }
     const baseUrl = options?.baseUrl === undefined
         ? envConfig.NEXT_PUBLIC_API_ENDPOINT // Main server
@@ -129,7 +135,7 @@ export async function request<Response>(
         }
     }
     // client -> (login) -> next server (trong luc next server) => set token in LS
-    if (isClient) {
+    if (isClient()) {
         if (normalizePath(url) === 'api/auth/login') {
             const { accessToken, refreshToken } = (payload as LoginResponseType).data
             localStorage.setItem('accessToken', accessToken)

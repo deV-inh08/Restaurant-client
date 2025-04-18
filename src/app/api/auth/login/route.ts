@@ -31,16 +31,18 @@ export const POST = async (request: Request) => {
         const decodedRefreshToken = jwt.decode(refreshToken) as decodedToken
         cookieStore.set('accessToken', accessToken, {
             httpOnly: true,
-            expires: decodedAccessToken.exp * 1000,
+            expires: new Date(decodedAccessToken.exp * 1000),
             sameSite: 'lax',
-            // secure: true -> Cookie chỉ được gửi qua HTTPS.
+            path: '/',
+            secure: true
 
         })
         cookieStore.set('refreshToken', refreshToken, {
             httpOnly: true,
-            expires: decodedRefreshToken.exp * 1000,
+            expires: new Date(decodedRefreshToken.exp * 1000),
             sameSite: 'lax',
-            // secure: true -> Cookie chỉ được gửi qua HTTPS.
+            path: '/',
+            secure: true
         })
         return Response.json(res.payload)
     } catch (error) {

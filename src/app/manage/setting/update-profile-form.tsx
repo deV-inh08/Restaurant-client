@@ -9,8 +9,18 @@ import { UpdateMeBody, UpdateMeBodyType } from '@/schema/account.schema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Form, FormField, FormItem, FormMessage } from '@/components/ui/form'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { useEffect, useRef, useState } from 'react'
+import { handleErrorApi } from '@/lib/utils'
+import { useAccountMe, useMutationAccountMe } from '@/queries/useAccount'
+import { useMutationMediaUpload } from '@/queries/useMedia'
+import { toast } from 'sonner'
 
 export default function UpdateProfileForm() {
+    const [file, setFile] = useState<File | null>(null)
+    const inputRef = useRef<HTMLInputElement | null>(null)
+    const { data, refetch } = useAccountMe()
+    const updateMeMutation = useMutationAccountMe()
+    const mediaMutation = useMutationMediaUpload()
     const form = useForm<UpdateMeBodyType>({
         resolver: zodResolver(UpdateMeBody),
         defaultValues: {
@@ -18,10 +28,54 @@ export default function UpdateProfileForm() {
             avatar: ''
         }
     })
+    const getMeData = data?.payload.data
+    const avatar = form.watch('avatar')
+    const name = form.watch('name')
+    const previewAvatar = file ? URL.createObjectURL(file) : avatar
+    useEffect(() => {
+        if (getMeData) {
+            const { avatar, name } = getMeData
+            form.reset({
+                avatar: avatar ?? '',
+                name
+            })
+        }
+    }, [form, getMeData])
+    const reset = () => form.reset()
+    // update media (avatar)
+    // update me (name: string, avatar)
+    const onSubmit = async (value: UpdateMeBodyType) => {
+        try {
+            let body = value
+            if (file) {
+                const formData = new FormData()
+                formData.append('file', file)
+                // update 'formData' => useMedia
+                const res = await mediaMutation.mutateAsync(formData)
+                // get payload from 'res' to update me
+                const avatar = res.payload.data
+                body = {
+                    ...value,
+                    avatar
+                }
+            }
+            const result = await updateMeMutation.mutateAsync(body)
+            toast.success(result.payload.message)
+            refetch()
+        } catch (error) {
+            handleErrorApi({
+                error,
+                setError: form.setError
+            })
+        }
+    }
+
 
     return (
         <Form {...form}>
-            <form noValidate className='grid auto-rows-max items-start gap-4 md:gap-8'>
+            <form onSubmit={form.handleSubmit(onSubmit, (error) => {
+                console.log(error)
+            })} onReset={reset} noValidate className='grid auto-rows-max items-start gap-4 md:gap-8'>
                 <Card x-chunk='dashboard-07-chunk-0'>
                     <CardHeader>
                         <CardTitle>Thông tin cá nhân</CardTitle>
@@ -31,24 +85,36 @@ export default function UpdateProfileForm() {
                             <FormField
                                 control={form.control}
                                 name='avatar'
-                                render={({ }) => (
-                                    <FormItem>
-                                        <div className='flex gap-2 items-start justify-start'>
-                                            <Avatar className='aspect-square w-[100px] h-[100px] rounded-md object-cover'>
-                                                <AvatarImage src={'Duoc'} />
-                                                <AvatarFallback className='rounded-none'>{'duoc'}</AvatarFallback>
-                                            </Avatar>
-                                            <input type='file' accept='image/*' className='hidden' />
-                                            <button
-                                                className='flex aspect-square w-[100px] items-center justify-center rounded-md border border-dashed'
-                                                type='button'
-                                            >
-                                                <Upload className='h-4 w-4 text-muted-foreground' />
-                                                <span className='sr-only'>Upload</span>
-                                            </button>
-                                        </div>
-                                    </FormItem>
-                                )}
+                                render={({ field }) => {
+                                    return (
+                                        <FormItem>
+                                            <div className='flex gap-2 items-start justify-start'>
+                                                <Avatar className='aspect-square w-[100px] h-[100px] rounded-md object-cover'>
+                                                    <AvatarImage src={previewAvatar} />
+                                                    <AvatarFallback className='rounded-none'>{name}</AvatarFallback>
+                                                </Avatar>
+                                                <input type='file' accept='image/*' className='hidden' ref={inputRef} onChange={(e) => {
+                                                    const file = e.target.files?.['0']
+                                                    if (file) {
+                                                        setFile(file)
+                                                        field.onChange(
+                                                            'http://localhost:3000/' + field.name
+                                                        )
+                                                    }
+
+                                                }} />
+                                                <button
+                                                    className='flex aspect-square w-[100px] items-center justify-center rounded-md border border-dashed'
+                                                    type='button'
+                                                    onClick={() => inputRef.current?.click()}
+                                                >
+                                                    <Upload className='h-4 w-4 text-muted-foreground' />
+                                                    <span className='sr-only'>Upload</span>
+                                                </button>
+                                            </div>
+                                        </FormItem>
+                                    )
+                                }}
                             />
 
                             <FormField
@@ -77,6 +143,6 @@ export default function UpdateProfileForm() {
                     </CardContent>
                 </Card>
             </form>
-        </Form>
+        </Form >
     )
 }
