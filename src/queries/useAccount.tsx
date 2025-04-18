@@ -14,8 +14,8 @@ export const useMutationAccountMe = () => {
     })
 }
 
-export const useMutationChangePassword = () => {
-    return useMutation({
-        mutationFn: accountApiReq.changePassword
-    })
-}
+// export const useMutationChangePassword = () => {
+//     return useMutation({
+//         mutationFn: accountApiReq.changePasswordv2
+//     })
+// }

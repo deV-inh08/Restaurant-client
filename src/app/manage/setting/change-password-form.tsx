@@ -8,9 +8,10 @@ import { useForm } from 'react-hook-form'
 import { ChangePasswordBody, ChangePasswordBodyType } from '@/schema/account.schema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Form, FormField, FormItem, FormMessage } from '@/components/ui/form'
-import { useMutationChangePassword } from '@/queries/useAccount'
+// import { useMutationChangePassword } from '@/queries/useAccount'
 import { toast } from 'sonner'
 import { handleErrorApi } from '@/lib/utils'
+import accountApiReq from '@/apiRequests/account'
 
 export default function ChangePasswordForm() {
     const form = useForm<ChangePasswordBodyType>({
@@ -21,7 +22,7 @@ export default function ChangePasswordForm() {
             confirmPassword: ''
         }
     })
-    const changePasswordMutation = useMutationChangePassword()
+    // const changePasswordMutation = useMutationChangePassword()
 
     // user click 'cancel' => reset form
     const reset = () => {
@@ -30,10 +31,8 @@ export default function ChangePasswordForm() {
     // handle submit changePassword
     const onSubmit = async (value: ChangePasswordBodyType) => {
         try {
-            const res = await changePasswordMutation.mutateAsync(value)
-            if (res.payload) {
-                toast.success(res.payload.message)
-            }
+            const res = await accountApiReq.changePasswordv2(value)
+            toast.success(res.payload.message)
         } catch (error) {
             handleErrorApi({
                 error,

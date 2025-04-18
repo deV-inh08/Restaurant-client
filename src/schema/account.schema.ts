@@ -24,6 +24,21 @@ export const ChangePasswordBody = z.object({
 })
 export type ChangePasswordBodyType = z.TypeOf<typeof ChangePasswordBody>
 
+export const ChangePasswordV2Res = z.object({
+    data: z.object({
+        accessToken: z.string(),
+        refreshToken: z.string(),
+        account: z.object({
+            id: z.number(),
+            name: z.string(),
+            email: z.string(),
+            role: z.enum([Roles.Owner, Roles.Employee]),
+            avatar: z.string().nullable()
+        })
+    }),
+    message: z.string()
+})
+export type ChangePasswordResType = z.TypeOf<typeof ChangePasswordV2Res>
 
 export const UpdateMeBody = z.object({
     name: z.string().trim().min(2).max(256),

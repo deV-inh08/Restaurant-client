@@ -1,31 +1,24 @@
-import authApiRequest from "@/apiRequests/auth"
-import { LoginBodyType } from "@/schema/auth.schema"
-import { cookies } from "next/headers"
 import jwt from 'jsonwebtoken'
-import { HttpError } from "@/lib/http"
+import accountApiReq from "@/apiRequests/account"
+import { ChangePasswordBodyType } from "@/schema/account.schema"
+import { cookies } from "next/headers"
+import { HttpError } from '@/lib/http'
+import { decodedToken } from '@/app/api/auth/login/route'
 
-/**
- * Flow: Next client -> Next Server(proxy) -> Main Server
- * 
- * Next Client -> (request) with data (email, password) -> Next Server 
- * Next Server receipt 'data' (email, password) -> (request) -> Main Server
- * Main Server -> return for Next Server (payload)
- * Next get payload (token) -> Set cookie (Client)
- */
-
-export type decodedToken = {
-    userId: number;
-    role: string;
-    tokenType: string;
-    iat: number;
-    exp: number;
-}
-
-export const POST = async (request: Request) => {
-    const body = (await request.json()) as LoginBodyType
+export const PUT = async (request: Request) => {
+    // get body from Next client
+    const body = (await request.json()) as ChangePasswordBodyType
     const cookieStore = await cookies()
+    const accessTokenFromCookie = (cookieStore.get('accessToken')?.value) as string
+    if (!accessTokenFromCookie) {
+        return Response.json({
+            message: "Don't have accessToken"
+        }, {
+            status: 401
+        })
+    }
     try {
-        const res = await authApiRequest.serverLogin(body)
+        const res = await accountApiReq.serverChangePasswordv2(body, accessTokenFromCookie.trim())
         const { accessToken, refreshToken } = res.payload.data
         const decodedAccessToken = jwt.decode(accessToken) as decodedToken
         const decodedRefreshToken = jwt.decode(refreshToken) as decodedToken
@@ -35,7 +28,6 @@ export const POST = async (request: Request) => {
             sameSite: 'lax',
             path: '/',
             secure: true
-
         })
         cookieStore.set('refreshToken', refreshToken, {
             httpOnly: true,
@@ -57,4 +49,5 @@ export const POST = async (request: Request) => {
             })
         }
     }
+    // request main Server
 }
