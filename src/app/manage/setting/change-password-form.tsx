@@ -8,6 +8,9 @@ import { useForm } from 'react-hook-form'
 import { ChangePasswordBody, ChangePasswordBodyType } from '@/schema/account.schema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Form, FormField, FormItem, FormMessage } from '@/components/ui/form'
+import { useMutationChangePassword } from '@/queries/useAccount'
+import { toast } from 'sonner'
+import { handleErrorApi } from '@/lib/utils'
 
 export default function ChangePasswordForm() {
     const form = useForm<ChangePasswordBodyType>({
@@ -18,10 +21,32 @@ export default function ChangePasswordForm() {
             confirmPassword: ''
         }
     })
+    const changePasswordMutation = useMutationChangePassword()
+
+    // user click 'cancel' => reset form
+    const reset = () => {
+        form.reset()
+    }
+    // handle submit changePassword
+    const onSubmit = async (value: ChangePasswordBodyType) => {
+        try {
+            const res = await changePasswordMutation.mutateAsync(value)
+            if (res.payload) {
+                toast.success(res.payload.message)
+            }
+        } catch (error) {
+            handleErrorApi({
+                error,
+                setError: form.setError
+            })
+        }
+    }
 
     return (
         <Form {...form}>
-            <form noValidate className='grid auto-rows-max items-start gap-4 md:gap-8'>
+            <form onReset={reset} onSubmit={form.handleSubmit(onSubmit, (error) => {
+                console.log(error)
+            })} noValidate className='grid auto-rows-max items-start gap-4 md:gap-8'>
                 <Card className='overflow-hidden' x-chunk='dashboard-07-chunk-4'>
                     <CardHeader>
                         <CardTitle>Đổi mật khẩu</CardTitle>
@@ -69,7 +94,7 @@ export default function ChangePasswordForm() {
                                 )}
                             />
                             <div className=' items-center gap-2 md:ml-auto flex'>
-                                <Button variant='outline' size='sm'>
+                                <Button type='reset' variant='outline' size='sm'>
                                     Hủy
                                 </Button>
                                 <Button size='sm'>Lưu thông tin</Button>

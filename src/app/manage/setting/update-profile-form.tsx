@@ -41,9 +41,8 @@ export default function UpdateProfileForm() {
             })
         }
     }, [form, getMeData])
+    // reset form if user click cancel
     const reset = () => form.reset()
-    // update media (avatar)
-    // update me (name: string, avatar)
     const onSubmit = async (value: UpdateMeBodyType) => {
         try {
             let body = value
@@ -51,6 +50,8 @@ export default function UpdateProfileForm() {
                 const formData = new FormData()
                 formData.append('file', file)
                 // update 'formData' => useMedia
+                // update media (avatar)
+
                 const res = await mediaMutation.mutateAsync(formData)
                 // get payload from 'res' to update me
                 const avatar = res.payload.data
@@ -59,6 +60,7 @@ export default function UpdateProfileForm() {
                     avatar
                 }
             }
+            // update me
             const result = await updateMeMutation.mutateAsync(body)
             toast.success(result.payload.message)
             refetch()
