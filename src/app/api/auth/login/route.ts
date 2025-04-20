@@ -3,7 +3,7 @@ import { LoginBodyType } from "@/schema/auth.schema"
 import { cookies } from "next/headers"
 import jwt from 'jsonwebtoken'
 import { HttpError } from "@/lib/http"
-
+import { decodedToken } from "@/types/decodedToken.type"
 /**
  * Flow: Next client -> Next Server(proxy) -> Main Server
  * 
@@ -12,15 +12,6 @@ import { HttpError } from "@/lib/http"
  * Main Server -> return for Next Server (payload)
  * Next get payload (token) -> Set cookie (Client)
  */
-
-export type decodedToken = {
-    userId: number;
-    role: string;
-    tokenType: string;
-    iat: number;
-    exp: number;
-}
-
 export const POST = async (request: Request) => {
     const body = (await request.json()) as LoginBodyType
     const cookieStore = await cookies()

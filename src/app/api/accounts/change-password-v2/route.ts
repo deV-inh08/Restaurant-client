@@ -3,7 +3,7 @@ import accountApiReq from "@/apiRequests/account"
 import { ChangePasswordBodyType } from "@/schema/account.schema"
 import { cookies } from "next/headers"
 import { HttpError } from '@/lib/http'
-import { decodedToken } from '@/app/api/auth/login/route'
+import { decodedToken } from '@/types/decodedToken.type'
 
 export const PUT = async (request: Request) => {
     // get body from Next client
@@ -36,6 +36,7 @@ export const PUT = async (request: Request) => {
             path: '/',
             secure: true
         })
+        // bat buoc phai return Response
         return Response.json(res.payload)
     } catch (error) {
         if (error instanceof HttpError) {

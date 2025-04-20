@@ -16,7 +16,7 @@ const authApiRequest = {
         }
     }),
     // next client -> next server (khong can truyen AT & RT vi 'request headers' auto send cookie)
-    logout: (body: LogoutBodyType) => http.post<{ payload: { message: string } }>('/api/auth/logout', body, {
+    logout: () => http.post<{ payload: { message: string } }>('/api/auth/logout', null, {
         baseUrl: ''
     }),
 
