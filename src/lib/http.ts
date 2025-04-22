@@ -98,6 +98,7 @@ export async function request<Response>(
         'Content-Type': 'application/json'
     }
     if (isClient()) {
+        // accessToken con han
         const accessToken = localStorage.getItem('accessToken')
         if (accessToken) {
             baseHeaders.Authorization = `Bearer ${accessToken}`

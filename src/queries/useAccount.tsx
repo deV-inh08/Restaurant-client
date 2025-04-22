@@ -8,6 +8,13 @@ export const useAccountMe = () => {
     })
 }
 
+export const useAccountMeServer = (accessToken: string) => {
+    return useQuery({
+        queryKey: ['account-profile', accessToken],
+        queryFn: () => accountApiReq.serverMe(accessToken)
+    })
+}
+
 export const useMutationAccountMe = () => {
     return useMutation({
         mutationFn: accountApiReq.updateMe

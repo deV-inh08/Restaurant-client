@@ -3,6 +3,11 @@ import { AccountResType, ChangePasswordBodyType, ChangePasswordResType, UpdateMe
 
 const accountApiReq = {
     me: () => http.get<{ payload: AccountResType }>('/accounts/me'),
+    serverMe: (accessToken: string) => http.get<{ payload: AccountResType }>('/accounts/me', {
+        headers: {
+            Authorization: `Bearer ${accessToken}`
+        }
+    }),
     updateMe: (body: UpdateMeBodyType) => http.put<{ payload: AccountResType }>('/accounts/me', body),
     // changePassword: (body: ChangePasswordBodyType) => http.put<{ payload: AccountResType }>('/accounts/change-password', body),
 
