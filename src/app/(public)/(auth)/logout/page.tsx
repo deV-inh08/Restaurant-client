@@ -23,7 +23,7 @@ const Logout = () => {
             }, 1000)
             router.push('/login')
         })
-    }, [router, mutateAsync, refreshTokenFromUrl])
+    }, [router, mutateAsync, refreshTokenFromUrl, accessTokenFromUrl])
     return (
         <div>Logout Page</div>
     )

@@ -37,6 +37,15 @@ export const RefreshTokenBody = z
 // RefreshToken type
 export type RefreshTokenBodyType = z.TypeOf<typeof RefreshTokenBody>
 
+export const RefreshTokenRes = z.object({
+    data: z.object({
+        accessToken: z.string(),
+        refreshToken: z.string()
+    }),
+    message: z.string()
+})
+export type RefreshTokenRes = z.TypeOf<typeof RefreshTokenRes>
+
 // Logout
 export const LogoutBody = z
     .object({

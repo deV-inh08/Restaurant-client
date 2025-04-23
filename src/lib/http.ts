@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import envConfig from "@/config"
 import { HttpStatus } from "@/constants/httpStatus"
-import { normalizePath } from "@/lib/utils"
+import { normalizePath, removeTokenFromLS } from "@/lib/utils"
 import { LoginResponseType } from "@/schema/auth.schema"
 /**
  * Create file http -> request
@@ -68,6 +68,7 @@ export class EntityError extends HttpError {
  * */
 
 const isClient = () => typeof window !== 'undefined'
+let clientLogoutRequest: null | Promise<any> = null
 
 export async function request<Response>(
     method: 'GET' | 'POST' | 'PUT' | 'DELETE',
@@ -131,7 +132,29 @@ export async function request<Response>(
                     payload: EntityErrorPayload
                 }
             )
-        } else {
+        } else if (res.status === HttpStatus.UNAUTHORIZED) {
+            if (isClient()) {
+                if (!clientLogoutRequest) {
+                    clientLogoutRequest = fetch('/api/auth/logout', {
+                        method: 'POST',
+                        body: null,
+                        headers: {
+                            ...baseHeaders
+                        }
+                    })
+                    try {
+                        await clientLogoutRequest
+                        /* eslint-disable @typescript-eslint/no-unused-vars */
+                    } catch (error) {
+
+                    } finally {
+                        removeTokenFromLS()
+                        clientLogoutRequest = null
+                    }
+                }
+            }
+        }
+        else {
             throw new HttpError(data)
         }
     }

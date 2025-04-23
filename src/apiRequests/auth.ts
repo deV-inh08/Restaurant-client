@@ -1,5 +1,5 @@
 import { http } from "@/lib/http";
-import { LoginBodyType, LoginResponseType, LogoutBodyType } from "@/schema/auth.schema";
+import { LoginBodyType, LoginResponseType, LogoutBodyType, RefreshTokenBodyType, RefreshTokenRes } from "@/schema/auth.schema";
 
 const authApiRequest = {
     // login: next server -> main server  
@@ -19,6 +19,12 @@ const authApiRequest = {
     logout: () => http.post<{ payload: { message: string } }>('/api/auth/logout', null, {
         baseUrl: ''
     }),
+
+    // refresh token
+    refreshToken: () => http.post<RefreshTokenBodyType>('/api/auth/refresh-token', null, {
+        baseUrl: ''
+    }),
+    serverRefreshToken: (body: RefreshTokenBodyType) => http.post<{ payload: RefreshTokenRes }>('/auth/refresh-token', body)
 
 }
 export default authApiRequest

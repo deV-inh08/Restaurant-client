@@ -44,3 +44,10 @@ export const getAccessTokenFromLocalStorage = () => {
 export const getRefreshTokenFromLocalStorage = () => {
   return isBrowser ? localStorage.getItem('refreshToken') : null
 }
+
+export const removeTokenFromLS = () => {
+  if (isBrowser) {
+    localStorage.removeItem('refreshToken')
+    localStorage.removeItem('accessToken')
+  }
+}
