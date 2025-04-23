@@ -2,6 +2,9 @@ import { http } from "@/lib/http";
 import { LoginBodyType, LoginResponseType, LogoutBodyType, RefreshTokenBodyType, RefreshTokenRes } from "@/schema/auth.schema";
 
 const authApiRequest = {
+    refreshTokenRequest: null as Promise<{
+        payload: RefreshTokenRes;
+    }> | null,
     // login: next server -> main server  
     serverLogin: (body: LoginBodyType) => http.post<{ status: number, payload: LoginResponseType }>('/auth/login', body),
     // login: next client -> next server
@@ -21,9 +24,19 @@ const authApiRequest = {
     }),
 
     // refresh token
-    refreshToken: () => http.post<RefreshTokenBodyType>('/api/auth/refresh-token', null, {
-        baseUrl: ''
-    }),
+    // refreshToken: () => http.post<{ payload: RefreshTokenRes }>('/api/auth/refresh-token', null, {
+    //     baseUrl: ''
+    // }),
+    async refreshToken() {
+        if (this.refreshTokenRequest) return this.refreshTokenRequest
+        this.refreshTokenRequest = http.post<{ payload: RefreshTokenRes }>('/api/auth/refresh-token', null, {
+            baseUrl: ''
+        })
+        const result = await this.refreshTokenRequest
+        this.refreshTokenRequest = null
+        return result
+    },
+
     serverRefreshToken: (body: RefreshTokenBodyType) => http.post<{ payload: RefreshTokenRes }>('/auth/refresh-token', body)
 
 }

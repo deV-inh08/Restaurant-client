@@ -36,6 +36,7 @@ export async function POST() {
             expires: decodedRefreshToken.exp * 1000
         })
         return Response.json(payload)
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
         return Response.json(
             {

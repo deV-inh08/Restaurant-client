@@ -51,3 +51,12 @@ export const removeTokenFromLS = () => {
     localStorage.removeItem('accessToken')
   }
 }
+
+
+export const setAccessTokenFromLocalStorage = (value: string) => {
+  return isBrowser ? localStorage.setItem('accessToken', value) : null
+}
+
+export const setRefreshTokenFromLocalStorage = (value: string) => {
+  return isBrowser ? localStorage.setItem('refreshToken', value) : null
+}
