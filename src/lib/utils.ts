@@ -84,10 +84,17 @@ export const checkAndRefreshToken = async (params: {
   }
 
   // time now (thoi gian hien tai)
-  const now = Math.round(new Date().getTime() / 1000)
+  // const now = Math.round(new Date().getTime() / 1000) khong lam tron 
+  const now = (new Date().getTime() / 1000) - 1
 
   // refreshToken het han thi khong refresh-token(accessToken) nua
-  if (decodeRefreshToken.exp <= now) return
+
+  // 20/5 <= 19/5(round) = 20/5 
+  if (decodeRefreshToken.exp <= now) {
+    console.log('Refresh token expires')
+    removeTokenFromLS()
+    return params.onError && params.onError()
+  }
 
   /**
    * thoi gian ton tai cua token: token.exp - token.iat

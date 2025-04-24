@@ -17,6 +17,7 @@ export async function middleware(request: NextRequest) {
     if (privatePaths.some((path) => pathname.startsWith(path)) && !getRefreshToken) {
         return Response.redirect(new URL('/login', request.url))
     }
+
     // Login roi thi ko cho vao Login page nua
     if (unAuthPaths.some((path) => pathname.startsWith(path)) && getRefreshToken && getAccessToken) {
         return Response.redirect(new URL('/', request.url))
