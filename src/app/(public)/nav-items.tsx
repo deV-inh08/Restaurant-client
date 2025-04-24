@@ -1,8 +1,8 @@
 'use client'
 
-import { getAccessTokenFromLocalStorage } from '@/lib/utils'
+import { AuthContext } from '@/contexts/AuthContext'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { useContext } from 'react'
 
 const menuItems = [
     {
@@ -26,15 +26,13 @@ const menuItems = [
 ]
 
 export default function NavItems({ className }: { className?: string }) {
-    const [isAuth, setIsAuth] = useState(false)
+    const { isAuth } = useContext(AuthContext)
     const visibleItems = menuItems.filter((item) => {
         if (item.authRequired === false && isAuth) return false
         if (item.authRequired === true && !isAuth) return false
         return true
     })
-    useEffect(() => {
-        setIsAuth(Boolean(getAccessTokenFromLocalStorage()))
-    }, [])
+
     return visibleItems.map((item) => (
         <Link href={item.href} key={item.href} className={className}>
             {item.title}

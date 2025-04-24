@@ -4,6 +4,8 @@ import { clsx, type ClassValue } from "clsx"
 import { UseFormSetError } from "react-hook-form"
 import { twMerge } from "tailwind-merge"
 import { toast } from 'sonner'
+import jwt from 'jsonwebtoken'
+import authApiRequest from "@/apiRequests/auth"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -59,4 +61,48 @@ export const setAccessTokenFromLocalStorage = (value: string) => {
 
 export const setRefreshTokenFromLocalStorage = (value: string) => {
   return isBrowser ? localStorage.setItem('refreshToken', value) : null
+}
+
+export const checkAndRefreshToken = async (params: {
+  onError?: () => void
+  onSuccess?: () => void
+}) => {
+  // get accessToken & refreshToken moi nhat
+  const accessToken = getAccessTokenFromLocalStorage()
+  const refreshToken = getRefreshTokenFromLocalStorage()
+
+  // khong co accessToken & refreshToken => return
+  if (!accessToken || !refreshToken) return
+
+  const decodedAccessToken = jwt.decode(accessToken) as {
+    exp: number, // time het han
+    iat: number
+  }
+  const decodeRefreshToken = jwt.decode(refreshToken) as {
+    exp: number, // time het han
+    iat: number
+  }
+
+  // time now (thoi gian hien tai)
+  const now = Math.round(new Date().getTime() / 1000)
+
+  // refreshToken het han thi khong refresh-token(accessToken) nua
+  if (decodeRefreshToken.exp <= now) return
+
+  /**
+   * thoi gian ton tai cua token: token.exp - token.iat
+   * thoi gian con lai: token.exp - now
+   */
+  if (decodedAccessToken.exp - now < (decodedAccessToken.exp - decodedAccessToken.iat) / 3) {
+    try {
+      const res = await authApiRequest.refreshToken()
+      setAccessTokenFromLocalStorage(res.payload.data.accessToken)
+      setRefreshTokenFromLocalStorage(res.payload.data.refreshToken)
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (error) {
+      if (params.onError) {
+        params.onError()
+      }
+    }
+  }
 }

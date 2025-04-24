@@ -10,8 +10,13 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useLoginMutation } from '@/queries/useAuth'
 import { handleErrorApi } from '@/lib/utils'
 import { toast } from 'sonner'
+import { useRouter } from 'next/navigation'
+import { useContext } from 'react'
+import { AuthContext } from '@/contexts/AuthContext'
 
 export default function LoginForm() {
+    const router = useRouter()
+    const { setIsAuth } = useContext(AuthContext)
     const loginMutation = useLoginMutation()
     const form = useForm<LoginBodyType>({
         resolver: zodResolver(LoginBodySchema),
@@ -26,6 +31,8 @@ export default function LoginForm() {
             const res = await loginMutation.mutateAsync(data)
             if (res.payload) {
                 toast.success(res.payload.message)
+                setIsAuth(true)
+                router.push('/')
             }
         } catch (error) {
             handleErrorApi({ error, setError: form.setError })

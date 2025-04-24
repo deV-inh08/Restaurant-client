@@ -11,20 +11,25 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { useLogoutMutation } from '@/queries/useAuth'
-import { getRefreshTokenFromLocalStorage } from '@/lib/utils'
 import { toast } from 'sonner'
 import { useAccountMe } from '@/queries/useAccount'
+import { useContext } from 'react'
+import { AuthContext } from '@/contexts/AuthContext'
+import { useRouter } from 'next/navigation'
 
 
 export default function DropdownAvatar() {
-  const refreshToken = getRefreshTokenFromLocalStorage() as string
+  const { setIsAuth } = useContext(AuthContext)
+  const router = useRouter()
   const useLogout = useLogoutMutation()
   const onClick = async () => {
-    const res = await useLogout.mutateAsync({ refreshToken })
+    const res = await useLogout.mutateAsync()
     localStorage.removeItem('accessToken')
     localStorage.removeItem('refreshToken')
     if (res.payload) {
       toast.success(res.payload.message)
+      setIsAuth(false)
+      router.push('/login')
     }
   }
   // get me
