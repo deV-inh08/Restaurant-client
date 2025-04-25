@@ -1,4 +1,5 @@
 'use client'
+import useAuth from '@/hooks/useAuth'
 import { getAccessTokenFromLocalStorage, getRefreshTokenFromLocalStorage } from '@/lib/utils'
 import { useLogoutMutation } from '@/queries/useAuth'
 import { UseMutateAsyncFunction } from '@tanstack/react-query'
@@ -7,6 +8,7 @@ import React, { useEffect, useRef } from 'react'
 
 const Logout = () => {
     const { mutateAsync } = useLogoutMutation()
+    const { setIsAuth } = useAuth()
     const searchParams = useSearchParams()
     const refreshTokenFromUrl = searchParams.get('refreshToken')
     const accessTokenFromUrl = searchParams.get('accessToken')
@@ -19,12 +21,13 @@ const Logout = () => {
                 setTimeout(() => {
                     ref.current = null
                 }, 1000)
+                setIsAuth(false)
                 router.push('/login')
             })
         } else {
             router.push('/')
         }
-    }, [router, mutateAsync, refreshTokenFromUrl, accessTokenFromUrl])
+    }, [router, mutateAsync, refreshTokenFromUrl, accessTokenFromUrl, setIsAuth])
     return (
         <div>Logout Page</div>
     )
