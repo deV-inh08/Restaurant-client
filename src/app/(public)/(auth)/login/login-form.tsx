@@ -8,15 +8,17 @@ import { Form, FormField, FormItem, FormMessage } from '@/components/ui/form'
 import { LoginBodyType, LoginBodySchema } from '@/schema/auth.schema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useLoginMutation } from '@/queries/useAuth'
-import { handleErrorApi } from '@/lib/utils'
+import { handleErrorApi, removeTokensFromLS } from '@/lib/utils'
 import { toast } from 'sonner'
-import { useRouter } from 'next/navigation'
-import { useContext } from 'react'
-import { AuthContext } from '@/contexts/AuthContext'
+import { useRouter, useSearchParams } from 'next/navigation'
+import useAuth from '@/hooks/useAuth'
+import { useEffect } from 'react'
 
 export default function LoginForm() {
+    const { setIsAuth } = useAuth()
     const router = useRouter()
-    const { setIsAuth } = useContext(AuthContext)
+    const searchParams = useSearchParams()
+    const clearToken = searchParams.get('clearTokens')
     const loginMutation = useLoginMutation()
     const form = useForm<LoginBodyType>({
         resolver: zodResolver(LoginBodySchema),
@@ -25,6 +27,13 @@ export default function LoginForm() {
             password: ''
         }
     })
+    useEffect(() => {
+        if (clearToken) {
+            removeTokensFromLS()
+            setIsAuth(false)
+        }
+    }, [clearToken, setIsAuth])
+
 
     const onSubmit = async (data: LoginBodyType) => {
         try {

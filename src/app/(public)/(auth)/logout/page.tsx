@@ -13,16 +13,17 @@ const Logout = () => {
     const ref = useRef<UseMutateAsyncFunction | null>(null)
     const router = useRouter()
     useEffect(() => {
-        if (ref.current || (refreshTokenFromUrl && refreshTokenFromUrl !== getRefreshTokenFromLocalStorage()) || (accessTokenFromUrl && accessTokenFromUrl !== getAccessTokenFromLocalStorage())) {
-            return
+        if (!ref.current && ((refreshTokenFromUrl && refreshTokenFromUrl === getRefreshTokenFromLocalStorage()) || (accessTokenFromUrl && accessTokenFromUrl === getAccessTokenFromLocalStorage()))) {
+            ref.current = mutateAsync
+            mutateAsync().then(() => {
+                setTimeout(() => {
+                    ref.current = null
+                }, 1000)
+                router.push('/login')
+            })
+        } else {
+            router.push('/')
         }
-        ref.current = mutateAsync
-        mutateAsync().then(() => {
-            setTimeout(() => {
-                ref.current = null
-            }, 1000)
-            router.push('/login')
-        })
     }, [router, mutateAsync, refreshTokenFromUrl, accessTokenFromUrl])
     return (
         <div>Logout Page</div>

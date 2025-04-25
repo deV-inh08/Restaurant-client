@@ -1,8 +1,7 @@
 'use client'
 
-import { AuthContext } from '@/contexts/AuthContext'
+import useAuth from '@/hooks/useAuth'
 import Link from 'next/link'
-import { useContext } from 'react'
 
 const menuItems = [
     {
@@ -11,7 +10,8 @@ const menuItems = [
     },
     {
         title: 'Đơn hàng',
-        href: '/orders'
+        href: '/orders',
+        authRequired: true
     },
     {
         title: 'Đăng nhập',
@@ -26,7 +26,7 @@ const menuItems = [
 ]
 
 export default function NavItems({ className }: { className?: string }) {
-    const { isAuth } = useContext(AuthContext)
+    const { isAuth } = useAuth()
     const visibleItems = menuItems.filter((item) => {
         if (item.authRequired === false && isAuth) return false
         if (item.authRequired === true && !isAuth) return false

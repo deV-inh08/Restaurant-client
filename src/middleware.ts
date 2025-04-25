@@ -15,7 +15,10 @@ export async function middleware(request: NextRequest) {
     console.log('accessToken', getAccessToken)
     // chua Login ma vao privatePaths
     if (privatePaths.some((path) => pathname.startsWith(path)) && !getRefreshToken) {
-        return Response.redirect(new URL('/login', request.url))
+        const url = new URL('/login', request.url)
+        url.searchParams.set('clearTokens', 'true')
+        return Response.redirect(url)
+
     }
 
     // Login roi thi ko cho vao Login page nua

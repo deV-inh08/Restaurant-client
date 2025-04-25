@@ -47,7 +47,7 @@ export const getRefreshTokenFromLocalStorage = () => {
   return isBrowser ? localStorage.getItem('refreshToken') : null
 }
 
-export const removeTokenFromLS = () => {
+export const removeTokensFromLS = () => {
   if (isBrowser) {
     localStorage.removeItem('refreshToken')
     localStorage.removeItem('accessToken')
@@ -67,10 +67,10 @@ export const checkAndRefreshToken = async (params: {
   onError?: () => void
   onSuccess?: () => void
 }) => {
+
   // get accessToken & refreshToken moi nhat
   const accessToken = getAccessTokenFromLocalStorage()
   const refreshToken = getRefreshTokenFromLocalStorage()
-
   // khong co accessToken & refreshToken => return
   if (!accessToken || !refreshToken) return
 
@@ -85,6 +85,7 @@ export const checkAndRefreshToken = async (params: {
 
   // time now (thoi gian hien tai)
   // const now = Math.round(new Date().getTime() / 1000) khong lam tron 
+  // khi set cookie thuong se bi lech (200ms ~ 1000ms)
   const now = (new Date().getTime() / 1000) - 1
 
   // refreshToken het han thi khong refresh-token(accessToken) nua
@@ -92,7 +93,8 @@ export const checkAndRefreshToken = async (params: {
   // 20/5 <= 19/5(round) = 20/5 
   if (decodeRefreshToken.exp <= now) {
     console.log('Refresh token expires')
-    removeTokenFromLS()
+    removeTokensFromLS()
+
     return params.onError && params.onError()
   }
 

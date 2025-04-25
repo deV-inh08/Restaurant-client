@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import envConfig from "@/config"
 import { HttpStatus } from "@/constants/httpStatus"
-import { normalizePath, removeTokenFromLS } from "@/lib/utils"
+import { normalizePath, removeTokensFromLS } from "@/lib/utils"
 import { LoginResponseType } from "@/schema/auth.schema"
 /**
  * Create file http -> request
@@ -148,7 +148,7 @@ export async function request<Response>(
                     } catch (error) {
 
                     } finally {
-                        removeTokenFromLS()
+                        removeTokensFromLS()
                         clientLogoutRequest = null
                     }
                 }

@@ -1,7 +1,17 @@
 import { http } from "@/lib/http";
 import { LoginBodyType, LoginResponseType, LogoutBodyType, RefreshTokenBodyType, RefreshTokenRes } from "@/schema/auth.schema";
 
-const authApiRequest = {
+interface AuthApiRequest {
+    refreshTokenRequest: Promise<{ payload: RefreshTokenRes }> | null;
+    serverLogin: (body: LoginBodyType) => Promise<{ status: number, payload: LoginResponseType }>;
+    login: (body: LoginBodyType) => Promise<{ status: number, payload: LoginResponseType }>;
+    serverLogout: (body: LogoutBodyType & { accessToken: string }) => Promise<{ payload: { message: string } }>;
+    logout: () => Promise<{ payload: { message: string } }>;
+    refreshToken: () => Promise<{ payload: RefreshTokenRes }>;
+    serverRefreshToken: (body: RefreshTokenBodyType) => Promise<{ payload: RefreshTokenRes }>;
+}
+
+const authApiRequest: AuthApiRequest = {
     refreshTokenRequest: null as Promise<{
         payload: RefreshTokenRes;
     }> | null,
