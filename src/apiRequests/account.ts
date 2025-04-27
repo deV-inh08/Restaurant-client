@@ -1,5 +1,5 @@
 import { http } from "@/lib/http";
-import { AccountResType, ChangePasswordBodyType, ChangePasswordResType, UpdateMeBodyType } from "@/schema/account.schema";
+import { AccountListResType, AccountResType, ChangePasswordBodyType, ChangePasswordResType, CreateEmployeeAccountBodyType, UpdateEmployeeAccountBodyType, UpdateMeBodyType } from "@/schema/account.schema";
 
 const accountApiReq = {
     me: () => http.get<{ payload: AccountResType }>('/accounts/me'),
@@ -18,7 +18,16 @@ const accountApiReq = {
         headers: {
             Authorization: `Bearer ${accessToken}`
         }
-    })
+    }),
+    list: () => http.get<AccountListResType>('/accounts'),
+
+    addEmployee: (body: CreateEmployeeAccountBodyType) => http.post<AccountResType>('/accounts', body),
+
+    updateEmployee: (id: number, body: UpdateEmployeeAccountBodyType) => http.put(`/accounts/detail/${id}`, body),
+
+    getEmployee: (id: number) => http.get(`/accounts/detail/${id}`),
+
+    deleteEmployee: (id: number) => http.delete<AccountResType>(`/accounts/detail/${id}`)
 }
 
 export default accountApiReq

@@ -182,7 +182,7 @@ export const http = {
     put: <Response>(url: string, body: any, options?: CustomOptions) => {
         return request<Response>('PUT', url, { ...options, body })
     },
-    delete: <Response>(url: string, options: CustomOptions) => {
+    delete: <Response>(url: string, options?: CustomOptions) => {
         return request<Response>('DELETE', url, { ...options })
     }
 }
