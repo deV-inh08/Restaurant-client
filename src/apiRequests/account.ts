@@ -19,7 +19,7 @@ const accountApiReq = {
             Authorization: `Bearer ${accessToken}`
         }
     }),
-    list: () => http.get<AccountListResType>('/accounts'),
+    list: () => http.get<{ payload: AccountListResType }>('/accounts'),
 
     addEmployee: (body: CreateEmployeeAccountBodyType) => http.post<{ payload: AccountResType }>('/accounts', body),
 

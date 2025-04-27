@@ -45,6 +45,7 @@ import {
 } from '@/components/ui/alert-dialog'
 import { useSearchParams } from 'next/navigation'
 import AutoPagination from '@/components/auto-panination'
+import { useGetAccountList } from '@/queries/useAccount'
 
 type AccountItem = AccountListResType['data'][0]
 
@@ -61,6 +62,15 @@ const AccountTableContext = createContext<{
 })
 
 export const columns: ColumnDef<AccountType>[] = [
+  {
+    id: 'stt', header: 'STT', cell: ({ row }) => {
+      return (
+        <>
+          {row.index + 1}
+        </>
+      )
+    }
+  },
   {
     accessorKey: 'id',
     header: 'ID'
@@ -165,9 +175,10 @@ export default function AccountTable() {
   const page = searchParam.get('page') ? Number(searchParam.get('page')) : 1
   const pageIndex = page - 1
   // const params = Object.fromEntries(searchParam.entries())
+  const accountListQuery = useGetAccountList()
+  const data: any[] = accountListQuery.data?.payload.data ?? []
   const [employeeIdEdit, setEmployeeIdEdit] = useState<number | undefined>()
   const [employeeDelete, setEmployeeDelete] = useState<AccountItem | null>(null)
-  const data: any[] = []
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
