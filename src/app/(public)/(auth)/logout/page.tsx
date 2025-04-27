@@ -4,9 +4,10 @@ import { getAccessTokenFromLocalStorage, getRefreshTokenFromLocalStorage } from 
 import { useLogoutMutation } from '@/queries/useAuth'
 import { UseMutateAsyncFunction } from '@tanstack/react-query'
 import { useRouter, useSearchParams } from 'next/navigation'
-import React, { useEffect, useRef } from 'react'
+import React, { Suspense, useEffect, useRef } from 'react'
 
-const Logout = () => {
+
+function Logout() {
     const { mutateAsync } = useLogoutMutation()
     const { setIsAuth } = useAuth()
     const searchParams = useSearchParams()
@@ -33,4 +34,12 @@ const Logout = () => {
     )
 }
 
-export default Logout
+const LogoutPage = () => {
+    return (
+        <Suspense>
+            <Logout></Logout>
+        </Suspense>
+    )
+}
+
+export default LogoutPage

@@ -1,4 +1,5 @@
 import { Roles } from '@/constants/type'
+import { LoginResponse } from '@/schema/auth.schema'
 import z from 'zod'
 
 export const AccountSchema = z.object({
@@ -56,7 +57,7 @@ export const UpdateEmployeeAccountBody = z
         changePassword: z.boolean().optional(),
         password: z.string().min(6).max(100).optional(),
         confirmPassword: z.string().min(6).max(100).optional(),
-        role: z.enum([Roles.Owner, Roles.Employee]).optional().default(Roles.Employee)
+        role: z.enum([Roles.Owner, Roles.Employee]).default(Roles.Employee).optional(),
     })
     .strict()
     .superRefine(({ confirmPassword, password, changePassword }, ctx) => {
@@ -106,6 +107,9 @@ export const ChangePasswordBody = z
     })
 
 export type ChangePasswordBodyType = z.TypeOf<typeof ChangePasswordBody>
+
+
+export type ChangePasswordResType = z.TypeOf<typeof LoginResponse>
 
 export const AccountIdParam = z.object({
     id: z.coerce.number()

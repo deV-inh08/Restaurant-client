@@ -12,9 +12,9 @@ import { handleErrorApi, removeTokensFromLS } from '@/lib/utils'
 import { toast } from 'sonner'
 import { useRouter, useSearchParams } from 'next/navigation'
 import useAuth from '@/hooks/useAuth'
-import { useEffect } from 'react'
+import { Suspense, useEffect } from 'react'
 
-export default function LoginForm() {
+function LoginForm() {
     const { setIsAuth } = useAuth()
     const router = useRouter()
     const searchParams = useSearchParams()
@@ -99,5 +99,13 @@ export default function LoginForm() {
                 </Form>
             </CardContent>
         </Card>
+    )
+}
+
+export default function LoginFormPage() {
+    return (
+        <Suspense>
+            <LoginForm />
+        </Suspense>
     )
 }

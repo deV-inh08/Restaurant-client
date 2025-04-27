@@ -25,7 +25,7 @@ export default function UpdateProfileForm() {
         resolver: zodResolver(UpdateMeBody),
         defaultValues: {
             name: '',
-            avatar: ''
+            avatar: undefined
         }
     })
     const getMeData = data?.payload.data
@@ -36,7 +36,7 @@ export default function UpdateProfileForm() {
         if (getMeData) {
             const { avatar, name } = getMeData
             form.reset({
-                avatar: avatar ?? '',
+                avatar: avatar ?? undefined,
                 name
             })
         }

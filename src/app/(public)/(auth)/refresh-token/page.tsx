@@ -1,9 +1,9 @@
 'use client'
 import { checkAndRefreshToken, getRefreshTokenFromLocalStorage } from "@/lib/utils"
 import { useRouter, useSearchParams } from "next/navigation"
-import { useEffect } from "react"
+import { useEffect, Suspense } from "react"
 
-const RefreshToken = () => {
+function RefreshToken() {
     const router = useRouter()
     const searchParams = useSearchParams()
     const refreshTokenFromUrl = searchParams.get('refreshToken')
@@ -24,4 +24,12 @@ const RefreshToken = () => {
     )
 }
 
-export default RefreshToken
+const RefreshTokenPage = () => {
+    return (
+        <Suspense>
+            <RefreshToken />
+        </Suspense>
+    )
+}
+
+export default RefreshTokenPage
