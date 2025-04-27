@@ -18,11 +18,17 @@ import { useMemo, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Form, FormField, FormItem, FormMessage } from '@/components/ui/form'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { useAddAccountMutation } from '@/queries/useAccount'
+import { useMutationMediaUpload } from '@/queries/useMedia'
+import { handleErrorApi } from '@/lib/utils'
+import { toast } from 'sonner'
 
 export default function AddEmployee() {
   const [file, setFile] = useState<File | null>(null)
   const [open, setOpen] = useState(false)
   const avatarInputRef = useRef<HTMLInputElement | null>(null)
+  const addAccountMutation = useAddAccountMutation()
+  const uploadMediaMutation = useMutationMediaUpload()
   const form = useForm<CreateEmployeeAccountBodyType>({
     resolver: zodResolver(CreateEmployeeAccountBody),
     defaultValues: {
@@ -42,6 +48,35 @@ export default function AddEmployee() {
     return avatar
   }, [file, avatar])
 
+  // reset form
+  const reset = () => {
+    form.reset()
+  }
+  // handle submit addAccount
+  const onSubmit = async (values: CreateEmployeeAccountBodyType) => {
+    if (addAccountMutation.isPending) return
+    try {
+      let body = values
+      if (file) {
+        const formData = new FormData()
+        formData.append('file', file)
+        const uploadImageResult = await uploadMediaMutation.mutateAsync(
+          formData
+        )
+        const imageURL = uploadImageResult.payload.data
+        body = {
+          ...values,
+          avatar: imageURL
+        }
+        const result = await addAccountMutation.mutateAsync(body)
+        toast.success(result.payload.message)
+        form.reset()
+      }
+    } catch (error) {
+      handleErrorApi({ error })
+    }
+
+  }
   return (
     <Dialog onOpenChange={setOpen} open={open}>
       <DialogTrigger asChild>
@@ -56,7 +91,10 @@ export default function AddEmployee() {
           <DialogDescription>Các trường tên, email, mật khẩu là bắt buộc</DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form noValidate className='grid auto-rows-max items-start gap-4 md:gap-8' id='add-employee-form'>
+          <form onReset={reset} onSubmit={form.handleSubmit(onSubmit, (err) => {
+            console.log(err)
+          })}
+            noValidate className='grid auto-rows-max items-start gap-4 md:gap-8' id='add-employee-form'>
             <div className='grid gap-4 py-4'>
               <FormField
                 control={form.control}

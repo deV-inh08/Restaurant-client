@@ -37,8 +37,8 @@ export default function EditEmployee({
       name: '',
       email: '',
       avatar: undefined,
-      password: undefined,
-      confirmPassword: undefined,
+      password: '',
+      confirmPassword: '',
       changePassword: false,
       role: 'Employee'
     }

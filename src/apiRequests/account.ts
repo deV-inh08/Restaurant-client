@@ -21,7 +21,7 @@ const accountApiReq = {
     }),
     list: () => http.get<AccountListResType>('/accounts'),
 
-    addEmployee: (body: CreateEmployeeAccountBodyType) => http.post<AccountResType>('/accounts', body),
+    addEmployee: (body: CreateEmployeeAccountBodyType) => http.post<{ payload: AccountResType }>('/accounts', body),
 
     updateEmployee: (id: number, body: UpdateEmployeeAccountBodyType) => http.put(`/accounts/detail/${id}`, body),
 
