@@ -120,8 +120,10 @@ export default function EditEmployee({
     }
   }
 
+  // reset when close popup
   const reset = () => {
     setId(undefined)
+    // set avatar null, when close popup
     setFile(null)
   }
 

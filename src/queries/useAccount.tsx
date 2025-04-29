@@ -65,9 +65,7 @@ export const useUpdateAccountMutation = () => {
 export const useDeleteAccountMutation = () => {
     const queryClient = useQueryClient()
     return useMutation({
-        mutationFn: ({ id }: {
-            id: number,
-        }) => accountApiReq.deleteEmployee(id),
+        mutationFn: (id: number) => accountApiReq.deleteEmployee(id),
         onSuccess: () => {
             queryClient.invalidateQueries({
                 queryKey: ['accounts']

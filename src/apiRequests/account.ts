@@ -27,7 +27,7 @@ const accountApiReq = {
 
     getEmployee: (id: number) => http.get<{ payload: AccountResType }>(`/accounts/detail/${id}`),
 
-    deleteEmployee: (id: number) => http.delete<AccountResType>(`/accounts/detail/${id}`)
+    deleteEmployee: (id: number) => http.delete<{ payload: AccountResType }>(`/accounts/detail/${id}`)
 }
 
 export default accountApiReq
