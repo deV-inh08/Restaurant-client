@@ -23,9 +23,9 @@ const accountApiReq = {
 
     addEmployee: (body: CreateEmployeeAccountBodyType) => http.post<{ payload: AccountResType }>('/accounts', body),
 
-    updateEmployee: (id: number, body: UpdateEmployeeAccountBodyType) => http.put(`/accounts/detail/${id}`, body),
+    updateEmployee: (id: number, body: UpdateEmployeeAccountBodyType) => http.put<{ payload: AccountResType }>(`/accounts/detail/${id}`, body),
 
-    getEmployee: (id: number) => http.get(`/accounts/detail/${id}`),
+    getEmployee: (id: number) => http.get<{ payload: AccountResType }>(`/accounts/detail/${id}`),
 
     deleteEmployee: (id: number) => http.delete<AccountResType>(`/accounts/detail/${id}`)
 }

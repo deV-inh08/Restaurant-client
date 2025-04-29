@@ -12,13 +12,17 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { UpdateEmployeeAccountBody, UpdateEmployeeAccountBodyType } from '@/schema/account.schema'
+import { CreateEmployeeAccountBodyType, UpdateEmployeeAccountBody, UpdateEmployeeAccountBodyType } from '@/schema/account.schema'
 import { Upload } from 'lucide-react'
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Form, FormField, FormItem, FormMessage } from '@/components/ui/form'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Switch } from '@/components/ui/switch'
+import { useGetAccount, useUpdateAccountMutation } from '@/queries/useAccount'
+import { useMutationMediaUpload } from '@/queries/useMedia'
+import { toast } from 'sonner'
+import { handleErrorApi } from '@/lib/utils'
 
 export default function EditEmployee({
   id,
@@ -31,21 +35,30 @@ export default function EditEmployee({
 }) {
   const [file, setFile] = useState<File | null>(null)
   const avatarInputRef = useRef<HTMLInputElement | null>(null)
+
+  // get account
+  const { data } = useGetAccount({
+    id: id as number,
+    enabled: Boolean(id)
+  })
+
   const form = useForm<UpdateEmployeeAccountBodyType>({
     resolver: zodResolver(UpdateEmployeeAccountBody),
     defaultValues: {
       name: '',
       email: '',
       avatar: undefined,
-      password: '',
-      confirmPassword: '',
+      password: undefined,
+      confirmPassword: undefined,
       changePassword: false,
-      role: 'Employee'
     }
   })
+
   const avatar = form.watch('avatar')
   const name = form.watch('name')
   const changePassword = form.watch('changePassword')
+
+  // preview avatar
   const previewAvatarFromFile = useMemo(() => {
     if (file) {
       return URL.createObjectURL(file)
@@ -53,12 +66,71 @@ export default function EditEmployee({
     return avatar
   }, [file, avatar])
 
+  useEffect(() => {
+    if (data) {
+      const { name, avatar, email } = data.payload.data
+      form.reset({
+        name,
+        avatar: avatar ?? undefined,
+        email,
+        changePassword: form.getValues('changePassword'),
+        password: form.getValues('password'),
+        confirmPassword: form.getValues('confirmPassword')
+      })
+    }
+  }, [data, form])
+
+  const updateAccountMutation = useUpdateAccountMutation()
+  const uploadMediaMutation = useMutationMediaUpload()
+
+  const onSubmit = async (values: UpdateEmployeeAccountBodyType) => {
+    try {
+      console.log(id)
+      let body: UpdateEmployeeAccountBodyType & { id: number } = { id: id as number, ...values }
+
+      // Nếu không đổi mật khẩu, loại bỏ các trường liên quan đến mật khẩu
+      if (!values.changePassword) {
+        delete body.password;
+        delete body.confirmPassword;
+      }
+
+      // Xử lý upload avatar nếu có file
+      if (file) {
+        const formData = new FormData()
+        formData.append('file', file)
+        // upload media (avatar)
+        const uploadImageResult = await uploadMediaMutation.mutateAsync(formData)
+        const imageUrl = uploadImageResult.payload.data
+        body = {
+          ...body,
+          avatar: imageUrl
+        }
+      }
+      // Gửi yêu cầu cập nhật tài khoản
+      const result = await updateAccountMutation.mutateAsync(body)
+      toast.success(result.payload.message)
+      form.reset()
+      reset()
+
+    } catch (error) {
+      handleErrorApi({
+        error,
+        setError: form.setError
+      })
+    }
+  }
+
+  const reset = () => {
+    setId(undefined)
+    setFile(null)
+  }
+
   return (
     <Dialog
       open={Boolean(id)}
       onOpenChange={(value) => {
         if (!value) {
-          setId(undefined)
+          reset()
         }
       }}
     >
@@ -68,7 +140,9 @@ export default function EditEmployee({
           <DialogDescription>Các trường tên, email, mật khẩu là bắt buộc</DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form noValidate className='grid auto-rows-max items-start gap-4 md:gap-8' id='edit-employee-form'>
+          <form onSubmit={form.handleSubmit(onSubmit, (error) => {
+            console.log(error)
+          })} noValidate className='grid auto-rows-max items-start gap-4 md:gap-8' id='edit-employee-form'>
             <div className='grid gap-4 py-4'>
               <FormField
                 control={form.control}
