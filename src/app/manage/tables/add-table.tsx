@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { PlusCircle } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
 import { getVietnameseTableStatus, handleErrorApi } from '@/lib/utils'
@@ -28,13 +28,19 @@ export default function AddTable() {
   })
   const reset = () => {
     form.reset()
+    setOpen(false)
   }
+
+  useEffect(() => {
+
+  }, [])
 
   const onSubmit = async (values: CreateTableBodyType) => {
     if (addTableMutation.isPending) return
     try {
       const result = await addTableMutation.mutateAsync(values)
       toast.success(result.payload.message)
+      setOpen(false)
     } catch (error) {
       handleErrorApi({
         error,

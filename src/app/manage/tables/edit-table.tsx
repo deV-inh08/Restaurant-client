@@ -6,12 +6,15 @@ import { Label } from '@/components/ui/label'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
-import { getTableLink, getVietnameseTableStatus } from '@/lib/utils'
+import { getTableLink, getVietnameseTableStatus, handleErrorApi } from '@/lib/utils'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { UpdateTableBody, UpdateTableBodyType } from '@/schema/table.schema'
 import { TableStatus, TableStatusValues } from '@/constants/type'
 import { Switch } from '@/components/ui/switch'
 import Link from 'next/link'
+import { useGetTable, useUpdateTableMutation } from '@/queries/useTable'
+import { toast } from 'sonner'
+import { useEffect } from 'react'
 
 export default function EditTable({
   id,
@@ -31,12 +34,51 @@ export default function EditTable({
   })
   const tableNumber = 0
 
+  const { data } = useGetTable({
+    id: id as number,
+    enanbled: Boolean(id)
+  })
+
+  const updateTableMutation = useUpdateTableMutation()
+
+  useEffect(() => {
+    if (data) {
+      const { capacity, status } = data.payload.data
+      form.reset({
+        capacity,
+        status,
+        changeToken: form.getValues('changeToken')
+      })
+    }
+  }, [data, form])
+
+  const onSubmit = async (values: UpdateTableBodyType) => {
+    if (updateTableMutation.isPending) return
+    try {
+      const body: UpdateTableBodyType & { id: number } = {
+        id: id as number,
+        ...values
+      }
+      const result = await updateTableMutation.mutateAsync(body)
+      toast.success(result.payload.message)
+    } catch (error) {
+      handleErrorApi({
+        error,
+        setError: form.setError
+      })
+    }
+  }
+
+  const reset = () => {
+    setId(undefined)
+  }
+
   return (
     <Dialog
       open={Boolean(id)}
       onOpenChange={(value) => {
         if (!value) {
-          setId(undefined)
+          reset()
         }
       }}
     >
@@ -44,14 +86,16 @@ export default function EditTable({
         className='sm:max-w-[600px] max-h-screen overflow-auto'
         onCloseAutoFocus={() => {
           form.reset()
-          setId(undefined)
+          reset()
         }}
       >
         <DialogHeader>
           <DialogTitle>Cập nhật bàn ăn</DialogTitle>
         </DialogHeader>
         <Form {...form}>
-          <form noValidate className='grid auto-rows-max items-start gap-4 md:gap-8' id='edit-table-form'>
+          <form onReset={reset} onSubmit={form.handleSubmit(onSubmit, (error) => {
+            console.log(error)
+          })} noValidate className='grid auto-rows-max items-start gap-4 md:gap-8' id='edit-table-form'>
             <div className='grid gap-4 py-4'>
               <FormItem>
                 <div className='grid grid-cols-4 items-center justify-items-start gap-4'>
