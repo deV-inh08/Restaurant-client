@@ -36,7 +36,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle
 } from '@/components/ui/alert-dialog'
-import { getTableLink, getVietnameseTableStatus } from '@/lib/utils'
+import { getVietnameseTableStatus } from '@/lib/utils'
 import { useSearchParams } from 'next/navigation'
 import AutoPagination from '@/components/auto-panination'
 import { TableListResType } from '@/schema/table.schema'
