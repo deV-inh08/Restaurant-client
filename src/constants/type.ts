@@ -13,5 +13,13 @@ export const DishStatus = {
     Hidden: 'Hidden'
 } as const
 
-
 export const DishStatusValues = [DishStatus.Available, DishStatus.Unavailable, DishStatus.Hidden] as const
+
+
+export const TableStatus = {
+    Available: 'Available',
+    Hidden: 'Hidden',
+    Reserved: 'Reserved'
+} as const
+
+export const TableStatusValues = [TableStatus.Available, TableStatus.Hidden, TableStatus.Reserved] as const

@@ -6,7 +6,8 @@ import { twMerge } from "tailwind-merge"
 import { toast } from 'sonner'
 import jwt from 'jsonwebtoken'
 import authApiRequest from "@/apiRequests/auth"
-import { DishStatus } from "@/constants/type"
+import { DishStatus, TableStatus } from "@/constants/type"
+import envConfig from "@/config"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -133,4 +134,19 @@ export const formatCurrency = (number: number) => {
     style: 'currency',
     currency: 'VND'
   }).format(number)
+}
+
+export const getVietnameseTableStatus = (status: (typeof TableStatus)[keyof typeof TableStatus]) => {
+  switch (status) {
+    case TableStatus.Available:
+      return 'Có sẵn'
+    case TableStatus.Reserved:
+      return 'Đã đặt'
+    default:
+      return 'Ẩn'
+  }
+}
+
+export const getTableLink = ({ token, tableNumber }: { token: string; tableNumber: number }) => {
+  return envConfig.NEXT_PUBLIC_URL + '/tables/' + tableNumber + '?token=' + token
 }
