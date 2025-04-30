@@ -46,8 +46,6 @@ export default function EditDish({
     }
   })
 
-  console.log(id)
-
   // get dish
   const { data } = useGetDish({
     id: id as number,
