@@ -26,7 +26,7 @@ export const useGetTable = ({ id, enanbled }: { id: number, enanbled: boolean })
 export const useUpdateTableMutation = () => {
     const queryClient = useQueryClient()
     return useMutation({
-        mutationFn: ({ id, ...body }: UpdateTableBodyType & { id: number }) => dishApiRequest.updateDish(id, body),
+        mutationFn: ({ id, ...body }: UpdateTableBodyType & { id: number }) => tableApiReq.updateTable(id, body),
         onSuccess: () => {
             queryClient.invalidateQueries({
                 queryKey: ['tables']
