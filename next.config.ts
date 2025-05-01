@@ -8,7 +8,10 @@ const nextConfig: NextConfig = {
       static: 60,
       dynamic: 30
     }
-  }
+  },
+  images: {
+    domains: ['localhost'], // 👈 Thêm dòng này
+  },
 };
 
 export default nextConfig;
