@@ -17,6 +17,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { useAddDish } from '@/queries/useDish'
 import { useMutationMediaUpload } from '@/queries/useMedia'
 import { toast } from 'sonner'
+import { revalidateApiReq } from '@/apiRequests/revalidate'
 
 export default function AddDish() {
   const [file, setFile] = useState<File | null>(null)
@@ -62,7 +63,11 @@ export default function AddDish() {
           ...values,
           image: imageURL
         }
+        // addDish
         const result = await addDishMutation.mutateAsync(body)
+        // revalidate
+        await revalidateApiReq('dishes')
+
         toast.success(result.payload.message)
         reset()
       }

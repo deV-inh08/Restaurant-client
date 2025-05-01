@@ -24,6 +24,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { useGetDish, useUpdateDishMutation } from '@/queries/useDish'
 import { useMutationMediaUpload } from '@/queries/useMedia'
 import { toast } from 'sonner'
+import { revalidateApiReq } from '@/apiRequests/revalidate'
 
 export default function EditDish({
   id,
@@ -92,6 +93,8 @@ export default function EditDish({
       }
       // Gửi yêu cầu cập nhật tài khoản
       const result = await updateDishMutation.mutateAsync(body)
+      // revalidate
+      await revalidateApiReq('dishes')
       toast.success(result.payload.message)
       form.reset()
       reset()

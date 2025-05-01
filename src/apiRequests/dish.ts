@@ -3,7 +3,7 @@ import { CreateDishBodyType, DishListResType, DishResType, UpdateDishBodyType } 
 
 const dishApiRequest = {
     // get list dishes
-    list: () => http.get<{ payload: DishListResType }>('dishes'),
+    list: () => http.get<{ payload: DishListResType }>('dishes', { next: { tags: ['dishes'] } }),
     add: (body: CreateDishBodyType) => http.post<{ payload: DishResType }>('dishes', body),
     getDish: (id: number) => http.get<{ payload: DishResType }>(`dishes/${id}`),
     updateDish: (id: number, body: UpdateDishBodyType) => http.put<{ payload: DishResType }>(`dishes/${id}`, body),
