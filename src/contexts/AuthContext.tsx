@@ -1,26 +1,31 @@
 'use client'
 
-import { getAccessTokenFromLocalStorage } from "@/lib/utils"
+import { decodeToken, getAccessTokenFromLocalStorage } from "@/lib/utils"
+import { RoleType } from "@/types/jwt.type"
 import React, { createContext, useEffect, useState } from "react"
 
 type AuthContextType = {
-    isAuth: boolean
-    setIsAuth: (value: boolean) => void
+    role: RoleType | undefined
+    setRole: React.Dispatch<React.SetStateAction<RoleType | undefined>>
 }
 
 export const AuthContext = createContext<AuthContextType>({
-    isAuth: false,
-    setIsAuth: () => { }
+    role: undefined,
+    setRole: () => { }
 })
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-    const [isAuth, setIsAuth] = useState<boolean>(false)
+    const [role, setRole] = useState<RoleType | undefined>()
     useEffect(() => {
-        setIsAuth(Boolean(getAccessTokenFromLocalStorage()))
+        const accessToken = getAccessTokenFromLocalStorage()
+        if (accessToken) {
+            const decodeAccessToken = decodeToken(accessToken) as { role: "Owner" | "Employee" | "Guest" }
+            setRole(decodeAccessToken.role)
+        }
     }, [])
 
     return (
-        <AuthContext.Provider value={{ isAuth, setIsAuth }}>
+        <AuthContext.Provider value={{ role, setRole }}>
             {children}
         </AuthContext.Provider>
     )

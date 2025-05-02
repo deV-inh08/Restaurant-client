@@ -6,7 +6,7 @@ import { useEffect, Suspense } from "react"
 
 function RefreshToken() {
     const router = useRouter()
-    const { setIsAuth } = useAuth()
+    const { setRole } = useAuth()
     const searchParams = useSearchParams()
     const refreshTokenFromUrl = searchParams.get('refreshToken')
     const redirectPathname = searchParams.get('redirect')
@@ -18,10 +18,10 @@ function RefreshToken() {
                 },
             })
         } else {
-            setIsAuth(false)
+            setRole(undefined)
             router.push('/')
         }
-    }, [router, refreshTokenFromUrl, redirectPathname, setIsAuth])
+    }, [router, refreshTokenFromUrl, redirectPathname, setRole])
     return (
         <div>...Refresh Token</div>
     )

@@ -8,7 +8,7 @@ import React, { useEffect } from 'react'
 const UNAUTHENTICATED_PATH = ['/login', '/logout', '/refresh-token']
 const RefreshToken = () => {
     const router = useRouter()
-    const { setIsAuth } = useAuth()
+    const { setRole } = useAuth()
     const pathName = usePathname()
     useEffect(() => {
         if (UNAUTHENTICATED_PATH.includes(pathName)) return
@@ -26,14 +26,14 @@ const RefreshToken = () => {
                 onError: () => {
                     clearInterval(interval)
                     router.push('/login')
-                    setIsAuth(false)
+                    setRole(undefined)
                 }
             })
         }, TIMEOUT)
         return () => {
             clearInterval(interval)
         }
-    }, [pathName, router, setIsAuth])
+    }, [pathName, router, setRole])
     return (
         <div></div>
     )

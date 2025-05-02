@@ -13,13 +13,12 @@ import Link from 'next/link'
 import { useLogoutMutation } from '@/queries/useAuth'
 import { toast } from 'sonner'
 import { useAccountMe } from '@/queries/useAccount'
-import { useContext } from 'react'
-import { AuthContext } from '@/contexts/AuthContext'
 import { useRouter } from 'next/navigation'
+import useAuth from '@/hooks/useAuth'
 
 
 export default function DropdownAvatar() {
-  const { setIsAuth } = useContext(AuthContext)
+  const { setRole } = useAuth()
   const router = useRouter()
   const useLogout = useLogoutMutation()
   const onClick = async () => {
@@ -28,7 +27,7 @@ export default function DropdownAvatar() {
     localStorage.removeItem('refreshToken')
     if (res.payload) {
       toast.success(res.payload.message)
-      setIsAuth(false)
+      setRole(undefined)
       router.push('/login')
     }
   }

@@ -26,10 +26,10 @@ const menuItems = [
 ]
 
 export default function NavItems({ className }: { className?: string }) {
-    const { isAuth } = useAuth()
+    const { role } = useAuth()
     const visibleItems = menuItems.filter((item) => {
-        if (item.authRequired === false && isAuth) return false
-        if (item.authRequired === true && !isAuth) return false
+        if (item.authRequired === false && role) return false
+        if (item.authRequired === true && !role) return false
         return true
     })
 

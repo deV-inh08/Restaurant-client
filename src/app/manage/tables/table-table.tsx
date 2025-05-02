@@ -84,14 +84,17 @@ export const columns: ColumnDef<TableItem>[] = [
   {
     accessorKey: 'token',
     header: 'QR Code',
-    cell: ({ row }) => (
-      <div>
-        <QRCodeTable
-          token={row.getValue('token')}
-          tableNumber={row.getValue('number')}
-        />
-      </div>
-    )
+    cell: ({ row }) => {
+      console.log(row.getValue('token'))
+      return (
+        <div>
+          <QRCodeTable
+            token={row.getValue('token')}
+            tableNumber={row.getValue('number')}
+          />
+        </div>
+      )
+    }
   },
   {
     id: 'actions',

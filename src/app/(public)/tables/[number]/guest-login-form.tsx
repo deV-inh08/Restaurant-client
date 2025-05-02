@@ -7,15 +7,49 @@ import { useForm } from 'react-hook-form'
 import { Form, FormField, FormItem, FormMessage } from '@/components/ui/form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { GuestLoginBodyType, GuestLoginBody } from '@/schema/guest.schema'
+import { useParams, useRouter, useSearchParams } from 'next/navigation'
+import { useEffect } from 'react'
+import { useGuestLoginMutation } from '@/queries/useGuest'
+import useAuth from '@/hooks/useAuth'
+import { handleErrorApi } from '@/lib/utils'
 export default function GuestLoginForm() {
+  const { setRole } = useAuth()
+  const searchParams = useSearchParams()
+  const { number } = useParams()
+
+  const tableNumber = Number(number)
+  const token = searchParams.get('token')!
+
+  const router = useRouter()
+
+  const guestLoginMutaion = useGuestLoginMutation()
+
   const form = useForm<GuestLoginBodyType>({
     resolver: zodResolver(GuestLoginBody),
     defaultValues: {
       name: '',
-      token: '',
-      tableNumber: 1
+      token: token ?? '',
+      tableNumber: tableNumber ?? ''
     }
   })
+
+  useEffect(() => {
+    if (!token) return router.push('/')
+  }, [token, router])
+
+  const onSubmit = async (values: GuestLoginBodyType) => {
+    if (guestLoginMutaion.isPending) return
+    try {
+      const result = await guestLoginMutaion.mutateAsync(values)
+      setRole(result.payload.data.guest.role)
+      router.push('/guest/menu')
+    } catch (error) {
+      handleErrorApi({
+        error,
+        setError: form.setError
+      })
+    }
+  }
 
   return (
     <Card className='mx-auto max-w-sm'>
@@ -24,7 +58,9 @@ export default function GuestLoginForm() {
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form className='space-y-2 max-w-[600px] flex-shrink-0 w-full' noValidate>
+          <form onSubmit={form.handleSubmit(onSubmit, (error) => {
+            console.log(error)
+          })} className='space-y-2 max-w-[600px] flex-shrink-0 w-full' noValidate>
             <div className='grid gap-4'>
               <FormField
                 control={form.control}

@@ -15,7 +15,7 @@ import useAuth from '@/hooks/useAuth'
 import { Suspense, useEffect } from 'react'
 
 function LoginForm() {
-    const { setIsAuth } = useAuth()
+    const { setRole } = useAuth()
     const router = useRouter()
     const searchParams = useSearchParams()
     const clearToken = searchParams.get('clearTokens')
@@ -30,9 +30,9 @@ function LoginForm() {
     useEffect(() => {
         if (clearToken) {
             removeTokensFromLS()
-            setIsAuth(false)
+            setRole(undefined)
         }
-    }, [clearToken, setIsAuth])
+    }, [clearToken, setRole])
 
 
     const onSubmit = async (data: LoginBodyType) => {
@@ -40,7 +40,7 @@ function LoginForm() {
             const res = await loginMutation.mutateAsync(data)
             if (res.payload) {
                 toast.success(res.payload.message)
-                setIsAuth(true)
+                setRole(res.payload.data.account.role)
                 router.push('/')
             }
         } catch (error) {

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import envConfig from "@/config"
 import { HttpStatus } from "@/constants/httpStatus"
-import { normalizePath, removeTokensFromLS } from "@/lib/utils"
+import { getAccessTokenFromLocalStorage, normalizePath, removeTokensFromLS, setAccessTokenFromLocalStorage, setRefreshTokenFromLocalStorage } from "@/lib/utils"
 import { LoginResponseType } from "@/schema/auth.schema"
 /**
  * Create file http -> request
@@ -100,7 +100,7 @@ export async function request<Response>(
     }
     if (isClient()) {
         // accessToken con han
-        const accessToken = localStorage.getItem('accessToken')
+        const accessToken = getAccessTokenFromLocalStorage()
         if (accessToken) {
             baseHeaders.Authorization = `Bearer ${accessToken}`
         }
@@ -160,10 +160,14 @@ export async function request<Response>(
     }
     // client -> (login) -> next server (trong luc next server) => set token in LS
     if (isClient()) {
-        if (normalizePath(url) === 'api/auth/login') {
+        const checkLoginPath = ['api/auth/login', 'api/guest/auth/login']
+        const checkLogoutPath = ['api/auth/logout', 'api/guest/auth/logut']
+        if (checkLoginPath.includes(normalizePath(url))) {
             const { accessToken, refreshToken } = (payload as LoginResponseType).data
-            localStorage.setItem('accessToken', accessToken)
-            localStorage.setItem('refreshToken', refreshToken)
+            setAccessTokenFromLocalStorage(accessToken)
+            setRefreshTokenFromLocalStorage(refreshToken)
+        } else if (checkLogoutPath.includes(normalizePath(url))) {
+            removeTokensFromLS()
         }
     }
     return data as Response

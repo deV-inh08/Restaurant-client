@@ -180,15 +180,15 @@ export default function EditTable({
                   <div className='col-span-3 w-full space-y-2'>
                     <Link
                       href={getTableLink({
-                        token: '123123123',
-                        tableNumber: tableNumber
+                        token: data?.payload.data.token as string,
+                        tableNumber: data?.payload.data.number as number
                       })}
                       target='_blank'
                       className='break-all'
                     >
                       {getTableLink({
-                        token: '123123123',
-                        tableNumber: tableNumber
+                        token: data?.payload.data.token as string,
+                        tableNumber: data?.payload.data.number as number
                       })}
                     </Link>
                   </div>

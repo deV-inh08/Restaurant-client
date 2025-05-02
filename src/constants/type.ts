@@ -42,3 +42,11 @@ export const OrderStatusValues = [
 ] as const
 
 export const ManagerRoom = 'manager' as const
+
+
+export const TokenType = {
+    ForgotPasswordToken: 'ForgotPasswordToken',
+    AccessToken: 'AccessToken',
+    RefreshToken: 'RefreshToken',
+    TableToken: 'TableToken'
+} as const
