@@ -6,9 +6,10 @@ import { twMerge } from "tailwind-merge"
 import { toast } from 'sonner'
 import jwt from 'jsonwebtoken'
 import authApiRequest from "@/apiRequests/auth"
-import { DishStatus, TableStatus } from "@/constants/type"
+import { DishStatus, Roles, TableStatus } from "@/constants/type"
 import envConfig from "@/config"
-import { TokenPayload } from "@/types/jwt.type"
+import { RoleType, TokenPayload } from "@/types/jwt.type"
+import guestApiRequest from "@/apiRequests/guest"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -79,11 +80,12 @@ export const checkAndRefreshToken = async (params: {
 
   const decodedAccessToken = jwt.decode(accessToken) as {
     exp: number, // time het han
-    iat: number
+    iat: number,
   }
   const decodeRefreshToken = jwt.decode(refreshToken) as {
     exp: number, // time het han
-    iat: number
+    iat: number,
+    role: RoleType
   }
 
   // time now (thoi gian hien tai)
@@ -107,7 +109,8 @@ export const checkAndRefreshToken = async (params: {
    */
   if (decodedAccessToken.exp - now < (decodedAccessToken.exp - decodedAccessToken.iat) / 3) {
     try {
-      const res = await authApiRequest.refreshToken()
+      const role = decodeRefreshToken.role
+      const res = role === Roles.Guest ? await guestApiRequest.refreshToken() : await authApiRequest.refreshToken()
       setAccessTokenFromLocalStorage(res.payload.data.accessToken)
       setRefreshTokenFromLocalStorage(res.payload.data.refreshToken)
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
