@@ -10,7 +10,7 @@ const nextConfig: NextConfig = {
     }
   },
   images: {
-    domains: ['localhost'], // 👈 Thêm dòng này
+    domains: ['localhost', 'www.google.com'], // 👈 Thêm dòng này
   },
 };
 
