@@ -2,17 +2,54 @@
 import Image from "next/image"
 import { Badge } from "@/components/ui/badge"
 import { useGuestGetOrderListQuery } from '@/queries/useGuest'
-import React, { useMemo } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import { formatCurrency, getVietnameseOrdersStatus } from "@/lib/utils"
+import socket from "@/lib/socket"
+import { UpdateOrderResType } from "@/schema/order.schema"
 
 const OrdersCart = () => {
-    const { data } = useGuestGetOrderListQuery()
+    const { data, refetch } = useGuestGetOrderListQuery()
     const orders = useMemo(() => data?.payload.data ?? [], [data?.payload.data])
     const totalPrice = useMemo(() => {
         return orders.reduce((result, order) => {
             return result + order.dishSnapshot.price * order.quantity
         }, 0)
     }, [orders])
+
+    useEffect(() => {
+        if (socket.connected) {
+            onConnect();
+        }
+
+        // when connect
+        function onConnect() {
+            console.log(socket.id)
+        }
+
+        // when disconnect
+        function onDisconnect() {
+            console.log('disconnected')
+        }
+
+        // update ordrer
+        function onUpdateOrder(data: UpdateOrderResType['data']) {
+            console.log(data)
+            refetch()
+        }
+
+        // listen envent
+        socket.on('update-order', onUpdateOrder)
+        socket.on("connect", onConnect);
+        socket.on("disconnect", onDisconnect);
+
+        return () => {
+            socket.off("connect", onConnect);
+            socket.off("disconnect", onDisconnect);
+            socket.off("update-order", onUpdateOrder);
+
+        };
+    }, [refetch]);
+
     return (
         <>
             {orders.map((order, index) => (
@@ -29,15 +66,15 @@ const OrdersCart = () => {
                         />
                     </div>
                     <div className='space-y-1'>
-                        <h3 className='text-sm'>{order.dishSnapshot.name}</h3>
-                        <p className='text-xs font-semibold'>{formatCurrency(order.dishSnapshot.price)}</p>
+                        <h3 className='text-xl font-semibold'>{order.dishSnapshot.name}</h3>
+                        <p className='text-xs'>{formatCurrency(order.dishSnapshot.price)}</p>
                         <Badge>
                             {getVietnameseOrdersStatus(order.status)}
                         </Badge>
 
                     </div>
                     <div className='flex-shrink-0 ml-auto flex justify-center items-center'>
-                        <p className="text-sm font-semibold">x{order.quantity}</p>
+                        <Badge>x{order.quantity}</Badge>
                     </div>
                 </div>
             ))}
