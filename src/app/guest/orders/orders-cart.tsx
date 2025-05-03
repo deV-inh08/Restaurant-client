@@ -6,6 +6,7 @@ import React, { useEffect, useMemo } from 'react'
 import { formatCurrency, getVietnameseOrdersStatus } from "@/lib/utils"
 import socket from "@/lib/socket"
 import { UpdateOrderResType } from "@/schema/order.schema"
+import { toast } from "sonner"
 
 const OrdersCart = () => {
     const { data, refetch } = useGuestGetOrderListQuery()
@@ -33,7 +34,10 @@ const OrdersCart = () => {
 
         // update ordrer
         function onUpdateOrder(data: UpdateOrderResType['data']) {
-            console.log(data)
+            const { dishSnapshot: { name } } = data
+            toast.success(`Món ăn ${name} vừa được cập nhật sang trạng thái ${getVietnameseOrdersStatus(data.status)}`, {
+                duration: 4000
+            })
             refetch()
         }
 

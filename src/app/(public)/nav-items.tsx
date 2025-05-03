@@ -8,6 +8,18 @@ import { RoleType } from '@/types/jwt.type'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
+import { AlertDialogTrigger } from '@radix-ui/react-alert-dialog'
+
 
 const menuItems: {
     title: string,
@@ -74,10 +86,26 @@ export default function NavItems({ className }: { className?: string }) {
                 return null
             })}
             {role && (
-                <span className={cn(className, 'cursor-pointer')} onClick={logout}>
-                    Đăng xuất
-                </span>
+                <AlertDialog>
+                    <AlertDialogTrigger><span className={cn(className, 'cursor-pointer')} >
+                        Đăng xuất
+                    </span></AlertDialogTrigger>
+                    <AlertDialogContent>
+                        <AlertDialogHeader>
+                            <AlertDialogTitle>Bạn có muốn đăng xuất không?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                                Việc đăng xuất có thể làm mất đi đơn hàng của bạn
+                            </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                            <AlertDialogCancel>Hủy</AlertDialogCancel>
+                            <AlertDialogAction onClick={logout}>Tiếp</AlertDialogAction>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>
             )}
+
+
         </>
     )
 }
