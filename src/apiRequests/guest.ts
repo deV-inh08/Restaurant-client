@@ -1,7 +1,6 @@
 import { http } from "@/lib/http"
 import { LogoutBodyType, RefreshTokenBodyType, RefreshTokenRes } from "@/schema/auth.schema"
-import { GuestCreateOrdersResType, GuestGetOrdersResType, GuestLoginBodyType, GuestLoginResType } from "@/schema/guest.schema"
-import { CreateOrdersBodyType } from "@/schema/order.schema";
+import { GuestCreateOrdersBodyType, GuestCreateOrdersResType, GuestGetOrdersResType, GuestLoginBodyType, GuestLoginResType } from "@/schema/guest.schema"
 
 const guestApiRequest = {
     refreshTokenRequest: null as Promise<{
@@ -31,8 +30,8 @@ const guestApiRequest = {
         this.refreshTokenRequest = null
         return result
     },
-    order: (body: CreateOrdersBodyType) => http.post<{ payload: GuestCreateOrdersResType }>('/guest/orders', body),
-    getOrders: () => http.get<{ payload: GuestGetOrdersResType }>('/guest/orders')
+    order: (body: GuestCreateOrdersBodyType) => http.post<{ payload: GuestCreateOrdersResType }>('/guest/orders', body),
+    getOrderList: () => http.get<{ payload: GuestGetOrdersResType }>('/guest/orders')
 }
 
 export default guestApiRequest

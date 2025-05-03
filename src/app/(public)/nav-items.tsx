@@ -25,6 +25,11 @@ const menuItems: {
             role: [Roles.Guest]
         },
         {
+            title: 'Đơn hàng',
+            href: '/guest/orders',
+            role: [Roles.Guest]
+        },
+        {
             title: 'Đăng nhập',
             href: '/login',
             hideWhenLogin: true

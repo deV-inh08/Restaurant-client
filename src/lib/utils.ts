@@ -6,7 +6,7 @@ import { twMerge } from "tailwind-merge"
 import { toast } from 'sonner'
 import jwt from 'jsonwebtoken'
 import authApiRequest from "@/apiRequests/auth"
-import { DishStatus, Roles, TableStatus } from "@/constants/type"
+import { DishStatus, OrderStatus, Roles, TableStatus } from "@/constants/type"
 import envConfig from "@/config"
 import { RoleType, TokenPayload } from "@/types/jwt.type"
 import guestApiRequest from "@/apiRequests/guest"
@@ -148,6 +148,21 @@ export const getVietnameseTableStatus = (status: (typeof TableStatus)[keyof type
       return 'Đã đặt'
     default:
       return 'Ẩn'
+  }
+}
+
+export const getVietnameseOrdersStatus = (status: (typeof OrderStatus)[keyof typeof OrderStatus]) => {
+  switch (status) {
+    case OrderStatus.Delivered:
+      return 'Đã giao'
+    case OrderStatus.Paid:
+      return 'Đã thanh toán'
+    case OrderStatus.Pending:
+      return 'Chờ xử lý'
+    case OrderStatus.Processing:
+      return 'Đang nấu'
+    default:
+      return 'Từ chối'
   }
 }
 

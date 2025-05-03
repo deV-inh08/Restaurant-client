@@ -19,10 +19,10 @@ const useGuestOrderMutation = () => {
     })
 }
 
-const useGetOrderListQuery = () => {
+const useGuestGetOrderListQuery = () => {
     return useQuery({
         queryKey: ['orders'],
-        queryFn: guestApiRequest.getOrders
+        queryFn: guestApiRequest.getOrderList
     })
 }
 
@@ -30,5 +30,5 @@ export {
     useGuestLoginMutation,
     useGuestLogoutMutation,
     useGuestOrderMutation,
-    useGetOrderListQuery
+    useGuestGetOrderListQuery
 }

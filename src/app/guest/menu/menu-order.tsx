@@ -1,17 +1,23 @@
 'use client'
 import Quantity from "@/app/guest/menu/quantity"
 import { Button } from "@/components/ui/button"
-import { formatCurrency } from "@/lib/utils"
+import { DishStatus } from "@/constants/type"
+import { formatCurrency, handleErrorApi } from "@/lib/utils"
 import { useGetDishes } from "@/queries/useDish"
+import { useGuestOrderMutation } from "@/queries/useGuest"
 import { GuestCreateOrdersBodyType } from "@/schema/guest.schema"
 import Image from "next/image"
+import { useRouter } from "next/navigation"
 import { useMemo, useState } from "react"
+import { toast } from "sonner"
 
 
 const MenuOrder = () => {
     const data = useGetDishes()
     const dishes = useMemo(() => data.data?.payload.data ?? [], [data])
     const [orders, setOrders] = useState<GuestCreateOrdersBodyType>([])
+    const router = useRouter()
+    const { mutateAsync } = useGuestOrderMutation()
     const totalPrice = useMemo(() => {
         return dishes.reduce((result, dish) => {
             const order = orders.find((order) => order.dishId === dish.id)
@@ -19,6 +25,7 @@ const MenuOrder = () => {
             return result + order.quantity * dish.price
         }, 0)
     }, [dishes, orders])
+
     const handleQuantityChange = (dishId: number, quantity: number) => {
         setOrders((prevOrder) => {
             if (quantity === 0) {
@@ -33,11 +40,27 @@ const MenuOrder = () => {
             return newOrders
         })
     }
+
+    const handleOrder = async () => {
+        try {
+            const result = await mutateAsync(orders)
+            toast.success(result.payload.message)
+            router.push('/guest/orders')
+        } catch (error) {
+            handleErrorApi({
+                error,
+            })
+        }
+    }
+
     return (
         <>
-            {dishes.map((dish) => (
+            {dishes.filter((dish) => dish.status !== DishStatus.Hidden).map((dish) => (
                 <div key={dish.id} className='flex gap-4'>
-                    <div className='flex-shrink-0'>
+                    <div className='flex-shrink-0 relative'>
+                        <span className="absolute inset-0 flex items-center justify-center">
+                            {dish.status === DishStatus.Unavailable && 'Hết hàng'}
+                        </span>
                         <Image
                             src={dish.image}
                             alt={dish.name}
@@ -53,10 +76,6 @@ const MenuOrder = () => {
                         <p className='text-xs font-semibold'>{formatCurrency(dish.price)}</p>
                     </div>
                     <div className='flex-shrink-0 ml-auto flex justify-center items-center'>
-                        {/* <Quantity
-                            onChange={(value) => handleQuantityChange(dish.id, value)}
-                            value={orders.find((order) => order.dishId === dish.id)?.dishId ?? 0}
-                        /> */}
                         <Quantity
                             onChange={(value) => handleQuantityChange(dish.id, value)}
                             value={orders.find((order) => order.dishId === dish.id)?.quantity ?? 0}
@@ -65,8 +84,8 @@ const MenuOrder = () => {
                 </div>
             ))}
             <div className='sticky bottom-0'>
-                <Button className='w-full justify-between'>
-                    <span>Giỏ hàng · {orders.length} món</span>
+                <Button onClick={handleOrder} className='w-full justify-between'>
+                    <span>Đặt hàng · {orders.length} món</span>
                     <span>{formatCurrency(totalPrice)}</span>
                 </Button>
             </div>
