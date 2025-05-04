@@ -11,7 +11,7 @@ const queryClient = new QueryClient({
             // Tab 1 -> Tab 2 => refetch API
             // false: don't fetch
             refetchOnWindowFocus: false,
-            refetchOnMount: false,
+            refetchOnMount: true,
         }
     }
 })
