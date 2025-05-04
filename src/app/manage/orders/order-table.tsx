@@ -190,18 +190,24 @@ export default function OrderTable() {
       refetch()
     }
 
+    function onPayment(data: PayGuestOrdersResType['data']) {
+      const { guest } = data[0]
+      toast(`${guest?.name} tại bàn ${guest?.tableNumber} thanh toán thành công ${data.length} đơn`)
+    }
+
     // listen envent
     socket.on("connect", onConnect);
     socket.on("disconnect", onDisconnect);
     socket.on('update-order', onUpdateOrder)
     socket.on('new-order', onNewOrder)
+    socket.on('payment', onPayment)
 
     return () => {
       socket.off("connect", onConnect);
       socket.off('update-order', onUpdateOrder)
       socket.off("new-order", onNewOrder);
       socket.off("disconnect", onDisconnect);
-
+      socket.off('payment', onPayment)
     };
   }, [refetchOrderList, fromDate, toDate]);
 
