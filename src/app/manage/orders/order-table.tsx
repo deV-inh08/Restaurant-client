@@ -35,6 +35,9 @@ import { endOfDay, format, startOfDay } from 'date-fns'
 import TableSkeleton from '@/app/manage/orders/table-skeleton'
 import { toast } from '@/components/ui/use-toast'
 import { GuestCreateOrdersResType } from '@/schema/guest.schema'
+import { useGuestGetOrderListQuery } from '@/queries/useGuest'
+import { useGetOrderList } from '@/queries/useOrder'
+import { useGetTables } from '@/queries/useTable'
 
 export const OrderTableContext = createContext({
   setOrderIdEdit: (value: number | undefined) => { },
@@ -59,16 +62,27 @@ export type ServingGuestByTableNumber = Record<number, OrderObjectByGuestID>
 const PAGE_SIZE = 10
 const initFromDate = startOfDay(new Date())
 const initToDate = endOfDay(new Date())
+
 export default function OrderTable() {
+
   const searchParam = useSearchParams()
   const [openStatusFilter, setOpenStatusFilter] = useState(false)
   const [fromDate, setFromDate] = useState(initFromDate)
   const [toDate, setToDate] = useState(initToDate)
+
+  const orderListQuery = useGetOrderList({
+    fromDate,
+    toDate
+  })
+
+  const tableListQuery = useGetTables()
   const page = searchParam.get('page') ? Number(searchParam.get('page')) : 1
   const pageIndex = page - 1
   const [orderIdEdit, setOrderIdEdit] = useState<number | undefined>()
-  const orderList: any = []
-  const tableList: any = []
+
+  const orderList = orderListQuery.data?.payload.data ?? []
+  const tableList = tableListQuery.data?.payload.data ?? []
+
   const tableListSortedByNumber = tableList.sort((a: any, b: any) => a.number - b.number)
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
@@ -228,7 +242,7 @@ export default function OrderTable() {
           tableList={tableListSortedByNumber}
           servingGuestByTableNumber={servingGuestByTableNumber}
         />
-        {/* <TableSkeleton /> */}
+        {orderListQuery.isPending && <TableSkeleton />}
         <div className='rounded-md border'>
           <Table>
             <TableHeader>
