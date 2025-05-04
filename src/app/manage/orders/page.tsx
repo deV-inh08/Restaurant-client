@@ -8,6 +8,7 @@ import {
 } from '@/components/ui/card'
 
 import { Suspense } from 'react'
+import { Toaster } from '@/components/ui/sonner'
 
 export default function AccountsPage() {
   return (
@@ -21,6 +22,7 @@ export default function AccountsPage() {
           <CardContent>
             <Suspense>
               <OrderTable />
+              <Toaster />
             </Suspense>
           </CardContent>
         </Card>

@@ -11,7 +11,8 @@ const useGetOrderList = (queryParams: GetOrdersQueryParamsType) => {
 
 const useUpdateOrderMutation = () => {
     return useMutation({
-        mutationFn: ({ orderId, ...body }: UpdateOrderBodyType & { orderId: number }) => orderApiReq.updateOrder(orderId, body)
+        mutationFn: ({ orderId, ...body }: UpdateOrderBodyType & { orderId: number }) => orderApiReq.updateOrder(orderId, body),
+
     })
 }
 

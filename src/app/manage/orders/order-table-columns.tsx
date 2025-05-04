@@ -30,7 +30,10 @@ const orderTableColumns: ColumnDef<OrderItem>[] = [
     cell: ({ row }) => <div>{row.getValue('tableNumber')}</div>,
     filterFn: (row, columnId, filterValue: string) => {
       if (filterValue === undefined) return true
-      return simpleMatchText(String(row.getValue(columnId)), String(filterValue))
+      return simpleMatchText(
+        String(row.getValue(columnId)),
+        String(filterValue)
+      )
     }
   },
   {
@@ -117,7 +120,9 @@ const orderTableColumns: ColumnDef<OrderItem>[] = [
     header: 'Trạng thái',
     cell: function Cell({ row }) {
       const { changeStatus } = useContext(OrderTableContext)
-      const changeOrderStatus = async (status: (typeof OrderStatusValues)[number]) => {
+      const changeOrderStatus = async (
+        status: (typeof OrderStatusValues)[number]
+      ) => {
         changeStatus({
           orderId: row.original.id,
           dishId: row.original.dishSnapshot.dishId!,

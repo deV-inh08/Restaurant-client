@@ -7,13 +7,15 @@ import { UpdateOrderBody, UpdateOrderBodyType } from '@/schema/order.schema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
-import { getVietnameseOrdersStatus } from '@/lib/utils'
+import { getVietnameseOrdersStatus, handleErrorApi } from '@/lib/utils'
 import { OrderStatus, OrderStatusValues } from '@/constants/type'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { DishesDialog } from '@/app/manage/orders/dishes-dialog'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { DishListResType } from '@/schema/dish.schema'
+import { useGetOrderDetailQuery, useUpdateOrderMutation } from '@/queries/useOrder'
+import { toast } from 'sonner'
 const fakeOrderDetail = {
   id: 30,
   guestId: 70,
@@ -72,8 +74,40 @@ export default function EditOrder({
       quantity: 1
     }
   })
+  const updateOrderMutation = useUpdateOrderMutation()
+  const { data } = useGetOrderDetailQuery({
+    id: id as number,
+    enabled: Boolean(id)
+  })
 
-  // const onSubmit = async (values: UpdateOrderBodyType) => { }
+  useEffect(() => {
+    if (data) {
+      const { status, dishSnapshot: { dishId }, quantity } = data.payload.data
+      form.reset({
+        status,
+        dishId: dishId ?? 0,
+        quantity
+      })
+      setSelectedDish(data.payload.data.dishSnapshot)
+    }
+  }, [data, form])
+
+  const onSubmit = async (values: UpdateOrderBodyType) => {
+    if (updateOrderMutation.isPending) return
+    try {
+      const body: UpdateOrderBodyType & { orderId: number } = {
+        orderId: id as number,
+        ...values
+      }
+      const result = await updateOrderMutation.mutateAsync(body)
+      toast.success(result.payload.message)
+    } catch (error) {
+      handleErrorApi({
+        error,
+        setError: form.setError
+      })
+    }
+  }
 
   const reset = () => {
     setId(undefined)
@@ -97,7 +131,9 @@ export default function EditOrder({
             noValidate
             className='grid auto-rows-max items-start gap-4 md:gap-8'
             id='edit-order-form'
-          // onSubmit={form.handleSubmit(onSubmit, console.log)}
+            onSubmit={form.handleSubmit(onSubmit, (error) => {
+              console.log(error)
+            })}
           >
             <div className='grid gap-4 py-4'>
               <FormField
