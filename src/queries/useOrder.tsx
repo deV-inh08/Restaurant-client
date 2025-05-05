@@ -36,9 +36,16 @@ const usePayOrderForGuestMutatation = () => {
     })
 }
 
+const useCreateOrderMutation = () => {
+    return useMutation({
+        mutationFn: orderApiReq.createOrder
+    })
+}
+
 export {
     useUpdateOrderMutation,
     useGetOrderList,
     useGetOrderDetailQuery,
-    usePayOrderForGuestMutatation
+    usePayOrderForGuestMutatation,
+    useCreateOrderMutation
 }
