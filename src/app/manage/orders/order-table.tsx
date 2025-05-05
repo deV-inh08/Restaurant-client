@@ -193,6 +193,7 @@ export default function OrderTable() {
     function onPayment(data: PayGuestOrdersResType['data']) {
       const { guest } = data[0]
       toast(`${guest?.name} tại bàn ${guest?.tableNumber} thanh toán thành công ${data.length} đơn`)
+      refetch()
     }
 
     // listen envent
