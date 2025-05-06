@@ -30,7 +30,7 @@ const accountApiReq = {
 
     deleteEmployee: (id: number) => http.delete<{ payload: AccountResType }>(`/accounts/detail/${id}`),
 
-    guestList: (queryParams: GetGuestListQueryParamsType) => http.get<{ payload: GetListGuestsResType }>(`/accounts/guest?` + queryString.stringify({
+    guestList: (queryParams: GetGuestListQueryParamsType) => http.get<{ payload: GetListGuestsResType }>(`/accounts/guests?` + queryString.stringify({
         fromDate: queryParams.fromDate?.toISOString(),
         toDate: queryParams.toDate?.toISOString()
     })),
