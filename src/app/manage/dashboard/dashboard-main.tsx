@@ -1,13 +1,14 @@
 'use client'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { RevenueLineChart } from '@/app/manage/dashboard/revenue-line-chart'
 import { DishBarChart } from '@/app/manage/dashboard/dish-bar-chart'
 import { formatCurrency } from '@/lib/utils'
-import { RevenueLineChart } from '@/app/manage/dashboard/revenue-line-chart'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { endOfDay, format, startOfDay } from 'date-fns'
 import { useState } from 'react'
+import { endOfDay, format, startOfDay } from 'date-fns'
 import { useDashboardIndicator } from '@/queries/useIndicator'
+
 
 const initFromDate = startOfDay(new Date())
 const initToDate = endOfDay(new Date())
@@ -36,22 +37,13 @@ export default function DashboardMain() {
       <div className='flex flex-wrap gap-2'>
         <div className='flex items-center'>
           <span className='mr-2'>Từ</span>
-          <Input
-            type='datetime-local'
-            placeholder='Từ ngày'
-            className='text-sm'
-            value={format(fromDate, 'yyyy-MM-dd HH:mm').replace(' ', 'T')}
-            onChange={(event) => setFromDate(new Date(event.target.value))}
-          />
+          <Input type='datetime-local' placeholder='Từ ngày' className='text-sm' value={format(fromDate, 'yyyy-MM-dd HH:mm').replace(' ', 'T')}
+            onChange={(event) => setFromDate(new Date(event.target.value))} />
         </div>
         <div className='flex items-center'>
           <span className='mr-2'>Đến</span>
-          <Input
-            type='datetime-local'
-            placeholder='Đến ngày'
-            value={format(toDate, 'yyyy-MM-dd HH:mm').replace(' ', 'T')}
-            onChange={(event) => setToDate(new Date(event.target.value))}
-          />
+          <Input type='datetime-local' placeholder='Đến ngày' value={format(toDate, 'yyyy-MM-dd HH:mm').replace(' ', 'T')}
+            onChange={(event) => setToDate(new Date(event.target.value))} />
         </div>
         <Button className='' variant={'outline'} onClick={resetDateFilter}>
           Reset
@@ -60,9 +52,7 @@ export default function DashboardMain() {
       <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-4'>
         <Card>
           <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-            <CardTitle className='text-sm font-medium'>
-              Tổng doanh thu
-            </CardTitle>
+            <CardTitle className='text-sm font-medium'>Tổng doanh thu</CardTitle>
             <svg
               xmlns='http://www.w3.org/2000/svg'
               viewBox='0 0 24 24'
@@ -122,14 +112,12 @@ export default function DashboardMain() {
           </CardHeader>
           <CardContent>
             <div className='text-2xl font-bold'>{orderCount}</div>
-            {/* <p className='text-xs text-muted-foreground'>Đã thanh toán</p> */}
+            <p className='text-xs text-muted-foreground'>Đã thanh toán</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-            <CardTitle className='text-sm font-medium'>
-              Bàn đang phục vụ
-            </CardTitle>
+            <CardTitle className='text-sm font-medium'>Bàn đang phục vụ</CardTitle>
             <svg
               xmlns='http://www.w3.org/2000/svg'
               viewBox='0 0 24 24'
