@@ -63,7 +63,6 @@ export function DishBarChart({ chartData }: {
     }
   })
 
-  console.log(chartDataColor)
   return (
     <Card>
       <CardHeader>

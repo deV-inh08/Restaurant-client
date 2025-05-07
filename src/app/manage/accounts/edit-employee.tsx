@@ -12,17 +12,21 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { CreateEmployeeAccountBodyType, UpdateEmployeeAccountBody, UpdateEmployeeAccountBodyType } from '@/schema/account.schema'
+import { UpdateEmployeeAccountBody, UpdateEmployeeAccountBodyType } from '@/schema/account.schema'
 import { Upload } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { Form, FormField, FormItem, FormMessage } from '@/components/ui/form'
+import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
+
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Switch } from '@/components/ui/switch'
 import { useGetAccount, useUpdateAccountMutation } from '@/queries/useAccount'
 import { useMutationMediaUpload } from '@/queries/useMedia'
 import { toast } from 'sonner'
 import { handleErrorApi } from '@/lib/utils'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+
+import { RoleValues } from '@/constants/type'
 
 export default function EditEmployee({
   id,
@@ -208,6 +212,35 @@ export default function EditEmployee({
                         <Input id='email' className='w-full' {...field} />
                         <FormMessage />
                       </div>
+                    </div>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name='role'
+                render={({ field }) => (
+                  <FormItem>
+                    <div className='grid grid-cols-4 items-center justify-items-start gap-4'>
+                      <Label htmlFor='description'>Trạng thái</Label>
+                      <div className='col-span-3 w-full space-y-2'>
+                        <Select onValueChange={field.onChange} value={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder='Chọn vai trò' />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {RoleValues.map((role) => (
+                              <SelectItem key={role} value={role}>
+                                {(role !== 'Guest') ? role : null}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <FormMessage />
                     </div>
                   </FormItem>
                 )}
