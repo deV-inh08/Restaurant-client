@@ -55,6 +55,7 @@ export default function EditEmployee({
       password: undefined,
       confirmPassword: undefined,
       changePassword: false,
+      role: undefined
     }
   })
 
@@ -72,14 +73,15 @@ export default function EditEmployee({
 
   useEffect(() => {
     if (data) {
-      const { name, avatar, email } = data.payload.data
+      const { name, avatar, email, role } = data.payload.data
       form.reset({
         name,
         avatar: avatar ?? undefined,
         email,
         changePassword: form.getValues('changePassword'),
         password: form.getValues('password'),
-        confirmPassword: form.getValues('confirmPassword')
+        confirmPassword: form.getValues('confirmPassword'),
+        role
       })
     }
   }, [data, form])
@@ -219,31 +221,34 @@ export default function EditEmployee({
               <FormField
                 control={form.control}
                 name='role'
-                render={({ field }) => (
-                  <FormItem>
-                    <div className='grid grid-cols-4 items-center justify-items-start gap-4'>
-                      <Label htmlFor='description'>Trạng thái</Label>
-                      <div className='col-span-3 w-full space-y-2'>
-                        <Select onValueChange={field.onChange} value={field.value}>
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder='Chọn vai trò' />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {RoleValues.map((role) => (
-                              <SelectItem key={role} value={role}>
-                                {(role !== 'Guest') ? role : null}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
+                render={({ field }) => {
+                  console.log(field.value)
+                  return (
+                    <FormItem>
+                      <div className='grid grid-cols-4 items-center justify-items-start gap-4'>
+                        <Label htmlFor='description'>Trạng thái</Label>
+                        <div className='col-span-3 w-full space-y-2'>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder='Chọn vai trò' />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {RoleValues.map((role) => (
+                                <SelectItem key={role} value={role}>
+                                  {(role !== 'Guest') ? role : null}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
 
-                      <FormMessage />
-                    </div>
-                  </FormItem>
-                )}
+                        <FormMessage />
+                      </div>
+                    </FormItem>
+                  )
+                }}
               />
               <FormField
                 control={form.control}

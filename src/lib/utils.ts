@@ -72,6 +72,7 @@ export const setRefreshTokenFromLocalStorage = (value: string) => {
 export const checkAndRefreshToken = async (params: {
   onError?: () => void
   onSuccess?: () => void
+  force?: boolean
 }) => {
 
   // get accessToken & refreshToken moi nhat
@@ -105,11 +106,15 @@ export const checkAndRefreshToken = async (params: {
     return params.onError && params.onError()
   }
 
+
   /**
    * thoi gian ton tai cua token: token.exp - token.iat
    * thoi gian con lai: token.exp - now
    */
-  if (decodedAccessToken.exp - now < (decodedAccessToken.exp - decodedAccessToken.iat) / 3) {
+  if (params.force || (decodedAccessToken.exp - now <
+    (decodedAccessToken.exp - decodedAccessToken.iat) / 3)
+  ) {
+    // Gọi API refresh token
     try {
       const role = decodeRefreshToken.role
       const res = role === Roles.Guest ? await guestApiRequest.refreshToken() : await authApiRequest.refreshToken()

@@ -69,10 +69,10 @@ export default function AddEmployee() {
           ...values,
           avatar: imageURL
         }
-        const result = await addAccountMutation.mutateAsync(body)
-        toast.success(result.payload.message)
-        form.reset()
       }
+      const result = await addAccountMutation.mutateAsync(body)
+      toast.success(result.payload.message)
+      form.reset()
     } catch (error) {
       handleErrorApi({ error })
     }
