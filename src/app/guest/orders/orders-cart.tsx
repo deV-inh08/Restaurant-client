@@ -7,10 +7,10 @@ import { formatCurrency, getVietnameseOrdersStatus } from "@/lib/utils"
 import { PayGuestOrdersResType, UpdateOrderResType } from "@/schema/order.schema"
 import { toast } from "sonner"
 import { OrderStatus } from "@/constants/type"
-import useAuth from "@/hooks/useAuth"
+import { useAppStore } from "@/components/app-providers"
 
 const OrdersCart = () => {
-    const { socket } = useAuth()
+    const socket = useAppStore(state => state.socket)
     const { data, refetch } = useGuestGetOrderListQuery()
     const orders = useMemo(() => data?.payload.data ?? [], [data?.payload.data])
     const { waitingForPaying, paid } = useMemo(() => {

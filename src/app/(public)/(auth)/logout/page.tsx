@@ -1,5 +1,5 @@
 'use client'
-import useAuth from '@/hooks/useAuth'
+import { useAppStore } from '@/components/app-providers'
 import { getAccessTokenFromLocalStorage, getRefreshTokenFromLocalStorage } from '@/lib/utils'
 import { useLogoutMutation } from '@/queries/useAuth'
 import { UseMutateAsyncFunction } from '@tanstack/react-query'
@@ -9,7 +9,8 @@ import React, { Suspense, useEffect, useRef } from 'react'
 
 function Logout() {
     const { mutateAsync } = useLogoutMutation()
-    const { setRole, disconnectSocket } = useAuth()
+    const setRole = useAppStore(state => state.setRole)
+    const disconnectSocket = useAppStore(state => state.disconnectSocket)
     const searchParams = useSearchParams()
     const refreshTokenFromUrl = searchParams.get('refreshToken')
     const accessTokenFromUrl = searchParams.get('accessToken')

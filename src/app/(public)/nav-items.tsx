@@ -1,7 +1,6 @@
 'use client'
 
 import { Roles } from '@/constants/type'
-import useAuth from '@/hooks/useAuth'
 import { cn, handleErrorApi } from '@/lib/utils'
 import { useLogoutMutation } from '@/queries/useAuth'
 import { RoleType } from '@/types/jwt.type'
@@ -19,6 +18,7 @@ import {
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import { AlertDialogTrigger } from '@radix-ui/react-alert-dialog'
+import { useAppStore } from '@/components/app-providers'
 
 
 const menuItems: {
@@ -54,7 +54,9 @@ const menuItems: {
     ]
 
 export default function NavItems({ className }: { className?: string }) {
-    const { role, setRole, disconnectSocket } = useAuth()
+    const role = useAppStore(state => state.role)
+    const setRole = useAppStore(state => state.setRole)
+    const disconnectSocket = useAppStore(state => state.disconnectSocket)
     const logoutMutation = useLogoutMutation()
     const router = useRouter()
     const logout = async () => {

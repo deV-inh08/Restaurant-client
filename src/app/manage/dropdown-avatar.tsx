@@ -14,11 +14,11 @@ import { useLogoutMutation } from '@/queries/useAuth'
 import { toast } from 'sonner'
 import { useAccountMe } from '@/queries/useAccount'
 import { useRouter } from 'next/navigation'
-import useAuth from '@/hooks/useAuth'
-
+import { useAppStore } from '@/components/app-providers'
 
 export default function DropdownAvatar() {
-  const { setRole, disconnectSocket } = useAuth()
+  const setRole = useAppStore(state => state.setRole)
+  const disconnectSocket = useAppStore(state => state.disconnectSocket)
   const router = useRouter()
   const useLogout = useLogoutMutation()
   const onClick = async () => {

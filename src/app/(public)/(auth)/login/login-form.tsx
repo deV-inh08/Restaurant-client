@@ -11,11 +11,12 @@ import { useLoginMutation } from '@/queries/useAuth'
 import { generateSocketInstance, handleErrorApi, removeTokensFromLS } from '@/lib/utils'
 import { toast } from 'sonner'
 import { useRouter, useSearchParams } from 'next/navigation'
-import useAuth from '@/hooks/useAuth'
+import { useAppStore } from '@/components/app-providers'
 import { Suspense, useEffect } from 'react'
 
 function LoginForm() {
-    const { setRole, setSocket } = useAuth()
+    const setRole = useAppStore(state => state.setRole)
+    const setSocket = useAppStore(state => state.setSocket)
     const router = useRouter()
     const searchParams = useSearchParams()
     const clearToken = searchParams.get('clearTokens')

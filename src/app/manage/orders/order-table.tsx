@@ -38,7 +38,7 @@ import { toast } from 'sonner'
 import { GuestCreateOrdersResType } from '@/schema/guest.schema'
 import { useGetOrderList, useUpdateOrderMutation } from '@/queries/useOrder'
 import { useGetTables } from '@/queries/useTable'
-import useAuth from '@/hooks/useAuth'
+import { useAppStore } from '@/components/app-providers'
 
 export const OrderTableContext = createContext({
   setOrderIdEdit: (value: number | undefined) => { },
@@ -65,7 +65,7 @@ const initFromDate = startOfDay(new Date())
 const initToDate = endOfDay(new Date())
 
 export default function OrderTable() {
-  const { socket } = useAuth()
+  const socket = useAppStore(state => state.socket)
   const searchParam = useSearchParams()
   const [openStatusFilter, setOpenStatusFilter] = useState(false)
   const [fromDate, setFromDate] = useState(initFromDate)
