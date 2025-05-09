@@ -4,12 +4,13 @@ import { Badge } from "@/components/ui/badge"
 import { useGuestGetOrderListQuery } from '@/queries/useGuest'
 import React, { useEffect, useMemo } from 'react'
 import { formatCurrency, getVietnameseOrdersStatus } from "@/lib/utils"
-import socket from "@/lib/socket"
 import { PayGuestOrdersResType, UpdateOrderResType } from "@/schema/order.schema"
 import { toast } from "sonner"
 import { OrderStatus } from "@/constants/type"
+import useAuth from "@/hooks/useAuth"
 
 const OrdersCart = () => {
+    const { socket } = useAuth()
     const { data, refetch } = useGuestGetOrderListQuery()
     const orders = useMemo(() => data?.payload.data ?? [], [data?.payload.data])
     const { waitingForPaying, paid } = useMemo(() => {
@@ -46,13 +47,13 @@ const OrdersCart = () => {
     }, [orders])
 
     useEffect(() => {
-        if (socket.connected) {
+        if (socket?.connected) {
             onConnect();
         }
 
         // when connect
         function onConnect() {
-            console.log(socket.id)
+            console.log(socket?.id)
         }
 
         // when disconnect
@@ -76,18 +77,18 @@ const OrdersCart = () => {
         }
 
         // listen envent
-        socket.on('update-order', onUpdateOrder)
-        socket.on("connect", onConnect);
-        socket.on("disconnect", onDisconnect);
-        socket.on('payment', onPayment)
+        socket?.on('update-order', onUpdateOrder)
+        socket?.on("connect", onConnect);
+        socket?.on("disconnect", onDisconnect);
+        socket?.on('payment', onPayment)
 
         return () => {
-            socket.off("connect", onConnect);
-            socket.off("disconnect", onDisconnect);
-            socket.off("update-order", onUpdateOrder);
-            socket.off('payment', onPayment)
+            socket?.off("connect", onConnect);
+            socket?.off("disconnect", onDisconnect);
+            socket?.off("update-order", onUpdateOrder);
+            socket?.off('payment', onPayment)
         };
-    }, [refetch]);
+    }, [refetch, socket]);
 
     return (
         <>
