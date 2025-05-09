@@ -147,6 +147,12 @@ export const formatCurrency = (number: number) => {
   }).format(number)
 }
 
+export const getRoleFromClient = () => {
+  const accessToken = getAccessTokenFromLocalStorage()
+  const { role } = accessToken ? decodeToken(accessToken) : { role: undefined }
+  return role
+}
+
 export const getVietnameseTableStatus = (status: (typeof TableStatus)[keyof typeof TableStatus]) => {
   switch (status) {
     case TableStatus.Available:

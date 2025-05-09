@@ -2,13 +2,18 @@
 import menuItems from '@/app/manage/menuItems'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
+import useAuth from '@/hooks/useAuth'
 import { cn } from '@/lib/utils'
+// import { RoleType } from '@/types/jwt.type'
 import { Package2, PanelLeft } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
+// type RoleWithoutGuest = Exclude<RoleType, 'Guest'>
+
 export default function MobileNavLinks() {
   const pathname = usePathname()
+  const { role } = useAuth()
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -32,6 +37,10 @@ export default function MobileNavLinks() {
           </Link>
           {menuItems.map((Item, index) => {
             const isActive = pathname === Item.href
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            if (!Item.roles?.includes(role as any)) {
+              return null
+            }
             return (
               <Link
                 key={index}

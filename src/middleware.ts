@@ -6,6 +6,7 @@ import { Roles } from "@/constants/type";
 
 const managePath = ['/manage']
 const guestPath = ['/guest']
+const ownerPath = ['/manage/account']
 const privatePaths = [...managePath, ...guestPath]
 const unAuthPaths = ['/login']
 
@@ -56,11 +57,19 @@ export async function middleware(request: NextRequest) {
         ) {
             return Response.redirect(new URL('/', request.url))
         }
+
+        // 2.4 owner chi truy cap route cho Owner
+        const isNotOwner = role !== Roles.Owner && ownerPath.some((path) => pathname.startsWith(path))
+        const isGuestGoToManagePath = role == Roles.Guest && ownerPath.some((path) => pathname.startsWith(path))
+        if (
+            isGuestGoToManagePath ||
+            isNotOwner
+        ) {
+            return NextResponse.redirect(new URL('/', request.url))
+        }
+        return NextResponse.next()
     }
-
-    return NextResponse.next()
 }
-
 // Matching Paths
 export const config = {
     matcher: ['/manage/:path*', '/guest/:path*', '/login']
