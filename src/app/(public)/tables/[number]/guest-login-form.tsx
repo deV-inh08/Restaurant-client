@@ -11,9 +11,9 @@ import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import { useEffect } from 'react'
 import { useGuestLoginMutation } from '@/queries/useGuest'
 import useAuth from '@/hooks/useAuth'
-import { handleErrorApi } from '@/lib/utils'
+import { generateSocketInstance, handleErrorApi } from '@/lib/utils'
 export default function GuestLoginForm() {
-  const { setRole } = useAuth()
+  const { setRole, setSocket } = useAuth()
   const searchParams = useSearchParams()
   const { number } = useParams()
 
@@ -42,6 +42,7 @@ export default function GuestLoginForm() {
     try {
       const result = await guestLoginMutaion.mutateAsync(values)
       setRole(result.payload.data.guest.role)
+      setSocket(generateSocketInstance(result.payload.data.accessToken))
       router.push('/guest/menu')
     } catch (error) {
       handleErrorApi({
