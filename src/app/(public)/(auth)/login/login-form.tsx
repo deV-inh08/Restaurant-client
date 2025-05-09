@@ -27,6 +27,7 @@ function LoginForm() {
             password: ''
         }
     })
+
     useEffect(() => {
         if (clearToken) {
             removeTokensFromLS()

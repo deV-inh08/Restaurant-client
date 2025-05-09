@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import authApiRequest from "@/apiRequests/auth";
 import type { NextRequest } from "next/server";
 import { cookies } from "next/headers";
 import guestApiRequest from "@/apiRequests/guest";

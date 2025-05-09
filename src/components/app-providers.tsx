@@ -1,5 +1,6 @@
 'use client'
 
+import { ListenLogoutSocket } from "@/components/listen-logout-socket"
 import RefreshToken from "@/components/refresh-token"
 import { AuthProvider } from "@/contexts/AuthContext"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
@@ -22,6 +23,7 @@ const AppProvider = ({ children }: { children: React.ReactNode }) => {
             <AuthProvider>
                 {children}
                 <RefreshToken />
+                <ListenLogoutSocket />
                 <ReactQueryDevtools initialIsOpen={false} />
             </AuthProvider>
         </QueryClientProvider>
