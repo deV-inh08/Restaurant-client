@@ -8,14 +8,14 @@ import { Form, FormField, FormItem, FormMessage } from '@/components/ui/form'
 import { LoginBodyType, LoginBodySchema } from '@/schema/auth.schema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useLoginMutation } from '@/queries/useAuth'
-import { generateSocketInstance, handleErrorApi, removeTokensFromLS } from '@/lib/utils'
+import { handleErrorApi, removeTokensFromLS } from '@/lib/utils'
 import { toast } from 'sonner'
 import { useRouter, useSearchParams } from 'next/navigation'
 import useAuth from '@/hooks/useAuth'
 import { Suspense, useEffect } from 'react'
 
 function LoginForm() {
-    const { setRole, setSocket } = useAuth()
+    const { setRole } = useAuth()
     const router = useRouter()
     const searchParams = useSearchParams()
     const clearToken = searchParams.get('clearTokens')
@@ -41,9 +41,7 @@ function LoginForm() {
             if (res.payload) {
                 toast.success(res.payload.message)
                 setRole(res.payload.data.account.role)
-                router.push('/manage/dashboard')
-                // connect socket
-                setSocket(generateSocketInstance(res.payload.data.accessToken))
+                router.push('/')
             }
         } catch (error) {
             handleErrorApi({ error, setError: form.setError })

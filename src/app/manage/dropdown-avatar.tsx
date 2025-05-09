@@ -18,7 +18,7 @@ import useAuth from '@/hooks/useAuth'
 
 
 export default function DropdownAvatar() {
-  const { setRole, disconnectSocket } = useAuth()
+  const { setRole } = useAuth()
   const router = useRouter()
   const useLogout = useLogoutMutation()
   const onClick = async () => {
@@ -29,7 +29,6 @@ export default function DropdownAvatar() {
       toast.success(res.payload.message)
       setRole(undefined)
       router.push('/login')
-      disconnectSocket()
     }
   }
   // get me
