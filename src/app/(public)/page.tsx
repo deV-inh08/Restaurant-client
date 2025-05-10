@@ -1,5 +1,6 @@
 import dishApiRequest from '@/apiRequests/dish'
 import { DishListResType } from '@/schema/dish.schema'
+import Link from 'next/link'
 import Image from 'next/image'
 
 export default async function Home() {
@@ -36,7 +37,7 @@ export default async function Home() {
                 <div className='grid grid-cols-1 sm:grid-cols-2 gap-10'>
                     {dishList
                         .map((dish, index) => (
-                            <div className='flex gap-4 w' key={index}>
+                            <Link href={`/dishes/${dish.id}`} className='flex gap-4 w' key={index}>
                                 <div className='flex-shrink-0'>
                                     <Image
                                         src={dish.image}
@@ -52,7 +53,7 @@ export default async function Home() {
                                     <p className=''>{dish.description}</p>
                                     <p className='font-semibold'>{dish.price}đ</p>
                                 </div>
-                            </div>
+                            </Link>
                         ))}
                 </div>
             </section>
