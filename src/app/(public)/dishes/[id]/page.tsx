@@ -2,10 +2,10 @@ import dishApiRequest from "@/apiRequests/dish"
 import DishDetail from "@/app/(public)/dishes/[id]/dish-detail"
 import { wrapServerApi } from "@/lib/utils"
 
+type tParams = Promise<{ id: string }>
+
 export default async function DishPage({ params }: {
-    params: {
-        id: string
-    }
+    params: tParams
 }) {
     const { id } = await params
     const data = await wrapServerApi(() => dishApiRequest.getDish(Number(id)))
