@@ -13,8 +13,10 @@ import { toast } from 'sonner'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useAppStore } from '@/components/app-providers'
 import { Suspense, useEffect } from 'react'
+import { useTranslations } from 'next-intl'
 
 function LoginForm() {
+    const t = useTranslations('Login')
     const setRole = useAppStore(state => state.setRole)
     const setSocket = useAppStore(state => state.setSocket)
     const router = useRouter()
@@ -54,8 +56,8 @@ function LoginForm() {
     return (
         <Card className='mx-auto max-w-sm'>
             <CardHeader>
-                <CardTitle className='text-2xl'>Đăng nhập</CardTitle>
-                <CardDescription>Nhập email và mật khẩu của bạn để đăng nhập vào hệ thống</CardDescription>
+                <CardTitle className='text-2xl'>{t('title')}</CardTitle>
+                <CardDescription>{t('desc')}</CardDescription>
             </CardHeader>
             <CardContent>
                 <Form {...form}>
@@ -83,7 +85,7 @@ function LoginForm() {
                                     <FormItem>
                                         <div className='grid gap-2'>
                                             <div className='flex items-center'>
-                                                <Label htmlFor='password'>Password</Label>
+                                                <Label htmlFor='password'>{t('password')}</Label>
                                             </div>
                                             <Input id='password' type='password' required {...field} />
                                             <FormMessage />
@@ -92,10 +94,10 @@ function LoginForm() {
                                 )}
                             />
                             <Button type='submit' className='w-full'>
-                                Đăng nhập
+                                {t('title')}
                             </Button>
                             <Button variant='outline' className='w-full' type='button'>
-                                Đăng nhập bằng Google
+                                {t('gg')}
                             </Button>
                         </div>
                     </form>

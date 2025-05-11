@@ -6,7 +6,6 @@ import { getTranslations } from 'next-intl/server';
 
 export default async function Home() {
     const t = await getTranslations('HomePage');
-    console.log(t)
     let dishList: DishListResType['data'] = []
     try {
         const result = await dishApiRequest.list()

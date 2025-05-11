@@ -1,5 +1,16 @@
 {
     "HomePage": {
         "title": "Hello world!"
+    },
+    "Login": {
+        "title": "Login",
+        "desc": "Enter your email and password to log in to the system",
+        "gg": "Log in by Google",
+        "password": "Password"
+    },
+    "SwitchLanguage": {
+        "title": "Switch Language",
+        "en": "English",
+        "vi": "Vietnamese"
     }
 }

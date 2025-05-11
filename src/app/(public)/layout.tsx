@@ -6,6 +6,7 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTr
 import { ModeToggle } from '@/components/mode-toogle'
 import NavItems from '@/app/(public)/nav-items'
 import React from 'react'
+import { SwitchLanguages } from '@/components/switch-languages'
 
 export default function Layout({
     children,
@@ -46,7 +47,8 @@ export default function Layout({
                         </nav>
                     </SheetContent>
                 </Sheet>
-                <div className='ml-auto'>
+                <div className='ml-auto flex items-center gap-4'>
+                    <SwitchLanguages />
                     <ModeToggle />
                 </div>
             </header>
