@@ -5,6 +5,8 @@ import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
 import AppProvider from "@/components/app-providers";
 import { Toaster } from "sonner";
+import { NextIntlClientProvider } from 'next-intl';
+import { getLocale } from 'next-intl/server';
 
 const fontSans = FontSans({
   variable: "--font-sans",
@@ -24,26 +26,30 @@ export const metadata: Metadata = {
   description: "The best restuarant in the world",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = await getLocale();
   return (
-    <html lang="en" className="mdl-js" suppressHydrationWarning>
+    <html lang={locale} className="mdl-js" suppressHydrationWarning>
       <body
         className={cn('min-h-screen bg-background font-sans antialiased', fontSans.variable)}
       >
-        <AppProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange>
-            {children}
-          </ThemeProvider>
-          <Toaster></Toaster>
-        </AppProvider>
+        <NextIntlClientProvider>
+          <AppProvider>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange>
+              {children}
+            </ThemeProvider>
+            <Toaster></Toaster>
+          </AppProvider>
+
+        </NextIntlClientProvider>
       </body>
     </html>
   );
