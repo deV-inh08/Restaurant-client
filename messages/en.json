@@ -25,8 +25,8 @@
         "notFound": "Dish not found"
     },
     "LoginGuest": {
-        "title": "Login to order",
-        "description": "Enter login information to place an order"
+        "title": "Login to order food",
+        "description": "Enter your fullname"
     },
     "GuestMenu": {
         "title": "Menu",
