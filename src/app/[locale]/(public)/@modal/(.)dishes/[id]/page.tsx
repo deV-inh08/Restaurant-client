@@ -1,6 +1,6 @@
 import dishApiRequest from "@/apiRequests/dish"
 import Modal from "@/app/[locale]/(public)/@modal/(.)dishes/[id]/modal"
-import DishDetail from "@/app/[locale]/(public)/dishes/[id]/dish-detail"
+import DishDetail from "@/app/[locale]/(public)/dishes/[slug]/dish-detail"
 import { wrapServerApi } from "@/lib/utils"
 
 type tParams = Promise<{ id: string }>

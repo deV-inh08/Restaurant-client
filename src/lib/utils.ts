@@ -13,6 +13,7 @@ import guestApiRequest from "@/apiRequests/guest"
 import { format } from 'date-fns'
 import { BookX, CookingPot, HandCoins, Loader, Truck } from 'lucide-react'
 import { io } from "socket.io-client"
+import slugify from 'slugify'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -101,7 +102,6 @@ export const checkAndRefreshToken = async (params: {
 
   // 20/5 <= 19/5(round) = 20/5 
   if (decodeRefreshToken.exp <= now) {
-    console.log('Refresh token expires')
     removeTokensFromLS()
 
     return params.onError && params.onError()
@@ -235,4 +235,18 @@ export const wrapServerApi = async <T>(fn: () => Promise<T>) => {
     }
   }
   return result
+}
+
+export const generateSlugUrl = ({
+  name,
+  id
+}: {
+  name: string
+  id: number
+}) => {
+  return `${slugify(name)}-i.${id}`
+}
+
+export const getIdFromSlugUrl = (slug: string) => {
+  return Number(slug.split('-i')[1])
 }

@@ -7,19 +7,23 @@ import NavItems from '@/app/[locale]/(public)/nav-items'
 import React from 'react'
 import { SwitchLanguages } from '@/components/switch-languages'
 import { Link } from '@/i18n/navigation'
+import { setRequestLocale } from 'next-intl/server'
+import { Locale } from 'next-intl'
 
-export default function Layout({
-    children,
-    modal
-}: Readonly<{
+export default async function Layout(props: Readonly<{
     children: React.ReactNode
-    modal: React.ReactNode
+    modal: React.ReactNode,
+    params: Promise<{ locale: string }>
 }>) {
+    const params = await props.params
+    const { locale } = params
+    setRequestLocale(locale as Locale)
+    const { children, modal } = props
     return (
         <div className='flex min-h-screen w-full flex-col relative'>
             <header className='sticky top-0 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6'>
                 <nav className='hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6'>
-                    <Link href='' className='flex items-center gap-2 text-lg font-semibold md:text-base'>
+                    <Link href='/' className='flex items-center gap-2 text-lg font-semibold md:text-base'>
                         <Package2 className='h-6 w-6' />
                         <span className='sr-only'>Big boy</span>
                     </Link>

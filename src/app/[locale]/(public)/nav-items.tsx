@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 
 import { Roles } from '@/constants/type'
@@ -23,7 +24,7 @@ import { useTranslations } from 'next-intl'
 
 
 const menuItems: {
-    title: 'Home' | 'Menu' | 'Orders' | 'Login' | 'Manage',
+    title: string,
     href: string
     role?: RoleType[]
     hideWhenLogin?: boolean
@@ -84,7 +85,7 @@ export default function NavItems({ className }: { className?: string }) {
                 if (isAuth || canShow) {
                     return (
                         <Link href={item.href} key={item.href} className={className}>
-                            {t(item.title)}
+                            {t(item.title as any)}
                         </Link>
                     )
                 }

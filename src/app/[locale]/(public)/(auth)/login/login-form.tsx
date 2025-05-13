@@ -10,7 +10,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useLoginMutation } from '@/queries/useAuth'
 import { generateSocketInstance, handleErrorApi, removeTokensFromLS } from '@/lib/utils'
 import { toast } from 'sonner'
-import { useRouter } from 'next/navigation'
+import { useRouter } from '@/i18n/navigation'
 import { useAppStore } from '@/components/app-providers'
 import { Suspense, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
@@ -47,7 +47,7 @@ function LoginForm() {
                 toast.success(res.payload.message)
                 setRole(res.payload.data.account.role)
                 setSocket(generateSocketInstance(res.payload.data.accessToken))
-                router.push('/')
+                router.push('/manage/dashboard')
             }
         } catch (error) {
             handleErrorApi({ error, setError: form.setError })
@@ -59,7 +59,7 @@ function LoginForm() {
             <SearchParamsLoader onParamsReceived={setSearchParams} />
             <CardHeader>
                 <CardTitle className='text-2xl'>{t('title')}</CardTitle>
-                <CardDescription>{t('desc')}</CardDescription>
+                <CardDescription>{t('cardDescription')}</CardDescription>
             </CardHeader>
             <CardContent>
                 <Form {...form}>
@@ -87,7 +87,7 @@ function LoginForm() {
                                     <FormItem>
                                         <div className='grid gap-2'>
                                             <div className='flex items-center'>
-                                                <Label htmlFor='password'>{t('password')}</Label>
+                                                <Label htmlFor='password'>Password</Label>
                                             </div>
                                             <Input id='password' type='password' required {...field} />
                                             <FormMessage />
@@ -99,7 +99,7 @@ function LoginForm() {
                                 {t('title')}
                             </Button>
                             <Button variant='outline' className='w-full' type='button'>
-                                {t('gg')}
+                                {t('loginWithGoogle')}
                             </Button>
                         </div>
                     </form>

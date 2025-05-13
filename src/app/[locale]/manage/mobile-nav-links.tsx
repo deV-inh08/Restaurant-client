@@ -14,7 +14,6 @@ import { usePathname } from 'next/navigation'
 export default function MobileNavLinks() {
   const pathname = usePathname()
   const role = useAppStore(state => state.role)
-  console.log(role)
   return (
     <Sheet>
       <SheetTrigger asChild>
