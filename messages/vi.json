@@ -1,6 +1,14 @@
 {
     "HomePage": {
-        "title": "Nhà hàng Big Boy "
+        "title": "Nhà hàng Big Boy ",
+        "desc": "Vị ngon, trọn khoảnh khắc",
+        "descmenu": "Đa dạng các món ăn",
+        "Home": "Trang chủ",
+        "Menu": "Menu",
+        "Manage": "Quản lý",
+        "Logout": "Đăng xuất",
+        "Login": "Đăng nhập",
+        "Orders": "Đơn hàng"
     },
     "Login": {
         "title": "Đăng nhập",

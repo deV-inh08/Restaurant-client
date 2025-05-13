@@ -10,18 +10,19 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useLoginMutation } from '@/queries/useAuth'
 import { generateSocketInstance, handleErrorApi, removeTokensFromLS } from '@/lib/utils'
 import { toast } from 'sonner'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { useAppStore } from '@/components/app-providers'
 import { Suspense, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
+import SearchParamsLoader, { useSearchParamsLoader } from '@/components/search-params-loader'
 
 function LoginForm() {
     const t = useTranslations('Login')
+    const { searchParams, setSearchParams } = useSearchParamsLoader()
     const setRole = useAppStore(state => state.setRole)
     const setSocket = useAppStore(state => state.setSocket)
     const router = useRouter()
-    const searchParams = useSearchParams()
-    const clearToken = searchParams.get('clearTokens')
+    const clearToken = searchParams?.get('clearTokens')
     const loginMutation = useLoginMutation()
     const form = useForm<LoginBodyType>({
         resolver: zodResolver(LoginBodySchema),
@@ -46,7 +47,7 @@ function LoginForm() {
                 toast.success(res.payload.message)
                 setRole(res.payload.data.account.role)
                 setSocket(generateSocketInstance(res.payload.data.accessToken))
-                router.push('/vi')
+                router.push('/')
             }
         } catch (error) {
             handleErrorApi({ error, setError: form.setError })
@@ -55,6 +56,7 @@ function LoginForm() {
 
     return (
         <Card className='mx-auto max-w-sm'>
+            <SearchParamsLoader onParamsReceived={setSearchParams} />
             <CardHeader>
                 <CardTitle className='text-2xl'>{t('title')}</CardTitle>
                 <CardDescription>{t('desc')}</CardDescription>

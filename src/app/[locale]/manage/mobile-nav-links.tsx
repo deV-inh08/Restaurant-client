@@ -6,7 +6,7 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTr
 import { cn } from '@/lib/utils'
 // import { RoleType } from '@/types/jwt.type'
 import { Package2, PanelLeft } from 'lucide-react'
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 import { usePathname } from 'next/navigation'
 
 // type RoleWithoutGuest = Exclude<RoleType, 'Guest'>

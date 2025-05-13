@@ -15,12 +15,6 @@ const fontSans = FontSans({
   subsets: ["latin"],
 });
 
-
-
-export function generateStaticParams() {
-  return routing.locales.map((locale) => ({ locale }));
-}
-
 // You can use many font
 
 // const geistMono = Geist_Mono({
@@ -33,6 +27,10 @@ export const metadata: Metadata = {
   description: "The best restuarant in the world",
 };
 
+export function generateStaticParams() {
+  return routing.locales.map((locale) => ({ locale }));
+}
+
 export default async function RootLayout({
   children,
   params
@@ -40,13 +38,14 @@ export default async function RootLayout({
   children: React.ReactNode;
   params: Promise<{ locale: Locale }>
 }>) {
+
   const { locale } = await params
+  setRequestLocale(locale);
 
   if (!hasLocale(routing.locales, locale)) {
     notFound();
   }
 
-  setRequestLocale(locale)
 
   const message = await getMessages()
 

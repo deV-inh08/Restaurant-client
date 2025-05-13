@@ -1,17 +1,15 @@
 import dishApiRequest from '@/apiRequests/dish'
 import { DishListResType } from '@/schema/dish.schema'
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 import Image from 'next/image'
 import { getTranslations } from 'next-intl/server';
-import { Locale } from 'next-intl';
-import { setRequestLocale } from 'next-intl/server';
+import { routing } from '@/i18n/routing';
 
-export default async function Home(props: {
-    params: Promise<{ locale: Locale }>
-}) {
-    const params = await props.params
-    const { locale } = params
-    setRequestLocale(locale)
+export function generateStaticParams() {
+    return routing.locales.map((locale) => ({ locale }));
+}
+
+export default async function Home() {
     const t = await getTranslations('HomePage');
     let dishList: DishListResType['data'] = []
     try {
@@ -38,11 +36,11 @@ export default async function Home(props: {
                 />
                 <div className='z-20 relative py-10 md:py-20 px-4 sm:px-10 md:px-20'>
                     <h1 className='text-center text-xl sm:text-2xl md:text-4xl lg:text-5xl font-bold'>{t('title')}</h1>
-                    <p className='text-center text-sm sm:text-base mt-4'>Vị ngon, trọn khoảnh khắc</p>
+                    <p className='text-center text-sm sm:text-base mt-4'>{t('desc')}</p>
                 </div>
             </div>
             <section className='space-y-10 py-16'>
-                <h2 className='text-center text-2xl font-bold'>Đa dạng các món ăn</h2>
+                <h2 className='text-center text-2xl font-bold'>{t('descmenu')}</h2>
                 <div className='grid grid-cols-1 sm:grid-cols-2 gap-10'>
                     {dishList
                         .map((dish, index) => (

@@ -4,8 +4,8 @@ import jwt from 'jsonwebtoken'
 import { RoleType } from "@/types/jwt.type";
 import { Roles } from "@/constants/type";
 import createMiddleware from 'next-intl/middleware';
-import { routing } from './i18n/routing';
-import { defaultLocale } from "@/i18n/config";
+import { routing } from "@/i18n/routing";
+import { defaultLocale } from "@/config";
 
 
 const managePath = ['/vi/manage', '/en/manage']
@@ -16,16 +16,10 @@ const unAuthPaths = ['/vi/login', '/en/login']
 
 
 // Custom middleware xử lý i18n
-const intlMiddleware = createMiddleware(routing);
+export const intlMiddleware = createMiddleware(routing);
 
 export async function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl
-
-    if (!routing.locales.some((locale) => pathname.startsWith(`/${locale}`))) {
-        const url = request.nextUrl.clone();
-        url.pathname = `/${defaultLocale}${pathname}`;
-        return NextResponse.redirect(url);
-    }
 
     // ✅ Gọi middleware i18n để xử lý locale & rewrite chính xác
     const response = intlMiddleware(request);
@@ -34,18 +28,23 @@ export async function middleware(request: NextRequest) {
     const getAccessToken = request.cookies.get('accessToken')?.value
     const getRefreshToken = request.cookies.get('refreshToken')?.value
     const locale = request.cookies.get('NEXT_LOCALE')?.value ?? defaultLocale
+
     /**
      * Truong hop chua dang nhap
      * chua Login ma vao privatePaths
      * 
      */
+    if (pathname === '/' && !getRefreshToken && !getAccessToken) {
+        const url = new URL(`/${locale}/login`, request.url)
+        console.log('a')
+        return Response.redirect(url)
+    }
+
+
     if (privatePaths.some((path) => pathname.startsWith(path)) && !getRefreshToken) {
         const url = new URL(`/${locale}/login`, request.url)
-        console.log(locale)
-        console.log(defaultLocale)
-
-
         url.searchParams.set('clearTokens', 'true')
+        console.log('b')
         return Response.redirect(url)
     }
 
@@ -61,6 +60,7 @@ export async function middleware(request: NextRequest) {
 
         // 2.1 Login roi thi ko cho vao Login page nua
         if (unAuthPaths.some((path) => pathname.startsWith(path)) && getRefreshToken && getAccessToken) {
+            console.log('1')
             return Response.redirect(new URL(`/${locale}`, request.url))
             // response.headers.set('x-middleware-rewrite', new URL('/', request.url).toString())
             // return response
@@ -69,6 +69,7 @@ export async function middleware(request: NextRequest) {
         // 2.2 Dang nhap roi, nhung accessToken het han
         if (privatePaths.some((path) => pathname.startsWith(path)) && getRefreshToken && !getAccessToken) {
             const url = new URL(`/${locale}/refresh-token`, request.url)
+            console.log(2)
             url.searchParams.set('refreshToken', getRefreshToken)
             url.searchParams.set('redirect', pathname)
             return NextResponse.redirect(url)
@@ -78,6 +79,7 @@ export async function middleware(request: NextRequest) {
         if ((role === Roles.Guest && managePath.some((path) => pathname.startsWith(path)))
             || role !== Roles.Guest && guestPath.some((path) => pathname.startsWith(path))
         ) {
+            console.log(3)
             return Response.redirect(new URL(`/${locale}`, request.url))
             // response.headers.set('x-middleware-rewrite', new URL('/', request.url).toString())
             // return response
@@ -90,6 +92,7 @@ export async function middleware(request: NextRequest) {
             isGuestGoToManagePath ||
             isNotOwner
         ) {
+            console.log(4)
             return NextResponse.redirect(new URL(`/${locale}`, request.url))
             // response.headers.set('x-middleware-rewrite', new URL('/', request.url).toString())
         }

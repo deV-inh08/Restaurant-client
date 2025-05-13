@@ -1,6 +1,14 @@
 {
     "HomePage": {
-        "title": "Big Boy restaurant"
+        "title": "Big Boy restaurant",
+        "desc": "Delicious flavors, perfect moments",
+        "descmenu": "A wide variety of dishes",
+        "Home": "Home",
+        "Menu": "Menu",
+        "Manage": "Manage",
+        "Logout": "Logout",
+        "Login": "Login",
+        "Orders": "Orders"
     },
     "Login": {
         "title": "Login",

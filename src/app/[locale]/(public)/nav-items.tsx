@@ -4,7 +4,7 @@ import { Roles } from '@/constants/type'
 import { cn, handleErrorApi } from '@/lib/utils'
 import { useLogoutMutation } from '@/queries/useAuth'
 import { RoleType } from '@/types/jwt.type'
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import {
@@ -19,17 +19,18 @@ import {
 } from "@/components/ui/alert-dialog"
 import { AlertDialogTrigger } from '@radix-ui/react-alert-dialog'
 import { useAppStore } from '@/components/app-providers'
+import { useTranslations } from 'next-intl'
 
 
 const menuItems: {
-    title: string,
+    title: 'Home' | 'Menu' | 'Orders' | 'Login' | 'Manage',
     href: string
     role?: RoleType[]
     hideWhenLogin?: boolean
 }[] = [
         {
-            title: 'Trang chủ',
-            href: '/vi'
+            title: 'Home',
+            href: '/'
         },
         {
             title: 'Menu',
@@ -37,17 +38,17 @@ const menuItems: {
             role: [Roles.Guest]
         },
         {
-            title: 'Đơn hàng',
+            title: 'Orders',
             href: '/guest/orders',
             role: [Roles.Guest]
         },
         {
-            title: 'Đăng nhập',
-            href: '/vi/login',
+            title: 'Login',
+            href: '/login',
             hideWhenLogin: true
         },
         {
-            title: 'Quản lý',
+            title: 'Manage',
             href: '/manage/dashboard',
             role: [Roles.Owner, Roles.Employee]
         },
@@ -55,6 +56,7 @@ const menuItems: {
 
 export default function NavItems({ className }: { className?: string }) {
     const role = useAppStore(state => state.role)
+    const t = useTranslations('HomePage')
     const setRole = useAppStore(state => state.setRole)
     const disconnectSocket = useAppStore(state => state.disconnectSocket)
     const logoutMutation = useLogoutMutation()
@@ -82,7 +84,7 @@ export default function NavItems({ className }: { className?: string }) {
                 if (isAuth || canShow) {
                     return (
                         <Link href={item.href} key={item.href} className={className}>
-                            {item.title}
+                            {t(item.title)}
                         </Link>
                     )
                 }

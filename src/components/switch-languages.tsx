@@ -6,16 +6,31 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
-import { locales, Locale } from "@/i18n/config"
-import { setUserLocale } from "@/services/locale"
-import { useLocale, useTranslations } from "next-intl"
+import { Locale, useLocale, useTranslations } from "next-intl"
+import { usePathname, useRouter } from "@/i18n/navigation"
+import { locales } from "@/config"
+import { Suspense } from "react"
 
 export const SwitchLanguages = () => {
+    return (
+        <Suspense>
+            <SwitchLanguageMain />
+        </Suspense>
+    )
+}
+
+
+const SwitchLanguageMain = () => {
     const t = useTranslations('SwitchLanguage')
     const locale = useLocale()
+    const pathname = usePathname()
+    const router = useRouter()
     return (
-        <Select defaultValue={locale} onValueChange={(value) => {
-            setUserLocale(value as Locale)
+        <Select value={locale} onValueChange={(value) => {
+            router.replace(pathname, {
+                locale: value as Locale
+            })
+            router.refresh()
         }}>
             <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder={t('title')} />
