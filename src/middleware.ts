@@ -1,32 +1,52 @@
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+// import { NextResponse } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 import jwt from 'jsonwebtoken'
 import { RoleType } from "@/types/jwt.type";
 import { Roles } from "@/constants/type";
+import createMiddleware from 'next-intl/middleware';
+import { routing } from './i18n/routing';
+import { defaultLocale } from "@/i18n/config";
 
-const managePath = ['/manage']
-const guestPath = ['/guest']
-const ownerPath = ['/manage/account']
+
+const managePath = ['/vi/manage', '/en/manage']
+const guestPath = ['/vi/guest', '/en/guest']
+const ownerPath = ['/vi/manage/account', '/en/manage/account']
 const privatePaths = [...managePath, ...guestPath]
-const unAuthPaths = ['/login']
+const unAuthPaths = ['/vi/login', '/en/login']
+
+
+// Custom middleware xử lý i18n
+const intlMiddleware = createMiddleware(routing);
 
 export async function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl
 
+    if (!routing.locales.some((locale) => pathname.startsWith(`/${locale}`))) {
+        const url = request.nextUrl.clone();
+        url.pathname = `/${defaultLocale}${pathname}`;
+        return NextResponse.redirect(url);
+    }
+
+    // ✅ Gọi middleware i18n để xử lý locale & rewrite chính xác
+    const response = intlMiddleware(request);
+
     // get accessToken & refreshToken from cookies
     const getAccessToken = request.cookies.get('accessToken')?.value
     const getRefreshToken = request.cookies.get('refreshToken')?.value
-
+    const locale = request.cookies.get('NEXT_LOCALE')?.value ?? defaultLocale
     /**
      * Truong hop chua dang nhap
      * chua Login ma vao privatePaths
      * 
      */
     if (privatePaths.some((path) => pathname.startsWith(path)) && !getRefreshToken) {
-        const url = new URL('/login', request.url)
+        const url = new URL(`/${locale}/login`, request.url)
+        console.log(locale)
+        console.log(defaultLocale)
+
+
         url.searchParams.set('clearTokens', 'true')
         return Response.redirect(url)
-
     }
 
     /**
@@ -34,18 +54,21 @@ export async function middleware(request: NextRequest) {
     * 
     */
     if (getRefreshToken) {
+
         // get role (decode refreshToken)
         const decodedRefreshToken = jwt.decode(getRefreshToken) as { role: RoleType }
         const role = decodedRefreshToken.role
 
         // 2.1 Login roi thi ko cho vao Login page nua
         if (unAuthPaths.some((path) => pathname.startsWith(path)) && getRefreshToken && getAccessToken) {
-            return Response.redirect(new URL('/', request.url))
+            return Response.redirect(new URL(`/${locale}`, request.url))
+            // response.headers.set('x-middleware-rewrite', new URL('/', request.url).toString())
+            // return response
         }
 
         // 2.2 Dang nhap roi, nhung accessToken het han
         if (privatePaths.some((path) => pathname.startsWith(path)) && getRefreshToken && !getAccessToken) {
-            const url = new URL('/refresh-token', request.url)
+            const url = new URL(`/${locale}/refresh-token`, request.url)
             url.searchParams.set('refreshToken', getRefreshToken)
             url.searchParams.set('redirect', pathname)
             return NextResponse.redirect(url)
@@ -55,7 +78,9 @@ export async function middleware(request: NextRequest) {
         if ((role === Roles.Guest && managePath.some((path) => pathname.startsWith(path)))
             || role !== Roles.Guest && guestPath.some((path) => pathname.startsWith(path))
         ) {
-            return Response.redirect(new URL('/', request.url))
+            return Response.redirect(new URL(`/${locale}`, request.url))
+            // response.headers.set('x-middleware-rewrite', new URL('/', request.url).toString())
+            // return response
         }
 
         // 2.4 owner chi truy cap route cho Owner
@@ -65,12 +90,14 @@ export async function middleware(request: NextRequest) {
             isGuestGoToManagePath ||
             isNotOwner
         ) {
-            return NextResponse.redirect(new URL('/', request.url))
+            return NextResponse.redirect(new URL(`/${locale}`, request.url))
+            // response.headers.set('x-middleware-rewrite', new URL('/', request.url).toString())
         }
-        return NextResponse.next()
+        // return NextResponse.next()
+        return response
     }
 }
-// Matching Paths
+
 export const config = {
-    matcher: ['/manage/:path*', '/guest/:path*', '/login']
+    matcher: ['/', '/((?!api|_next|.*\\..*).*)'], // Áp dụng middleware cho tất cả các đường dẫn, trừ các đường dẫn tĩnh và API
 }

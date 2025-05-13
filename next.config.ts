@@ -8,7 +8,7 @@ const nextConfig: NextConfig = {
     staleTimes: {
       static: 60,
       dynamic: 30
-    }
+    },
   },
   images: {
     domains: ['localhost', 'www.google.com'], // 👈 Thêm dòng này
