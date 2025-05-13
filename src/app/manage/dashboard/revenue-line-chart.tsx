@@ -69,7 +69,7 @@ export function RevenueLineChart({
               dataKey='revenue'
               name='Doanh thu'
               type='linear'
-              stroke='var(--color-desktop)'
+              stroke='var(--chart-5)'
               strokeWidth={2}
               dot={false}
             />
