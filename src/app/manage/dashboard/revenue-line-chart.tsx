@@ -32,7 +32,6 @@ export function RevenueLineChart({
     <Card>
       <CardHeader>
         <CardTitle>Doanh thu</CardTitle>
-        {/* <CardDescription>January - June 2024</CardDescription> */}
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>

@@ -32,7 +32,7 @@ function LoginForm() {
         }
     })
 
-    useEffect(() => {
+useEffect(() => {
         if (clearToken) {
             removeTokensFromLS()
             setRole(undefined)

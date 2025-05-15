@@ -20,12 +20,12 @@ export default function DashboardMain() {
     fromDate,
     toDate
   })
-  const revenue = data?.payload.data.revenue ?? 0
-  const guestCount = data?.payload.data.guestCount ?? 0
-  const orderCount = data?.payload.data.orderCount ?? 0
-  const servingTableCount = data?.payload.data.servingTableCount ?? 0
-  const revenueByDate = data?.payload.data.revenueByDate ?? []
-  const dishIndicator = data?.payload.data.dishIndicator ?? []
+  const revenue = data?.payload?.data?.revenue ?? 0
+  const guestCount = data?.payload?.data?.guestCount ?? 0
+  const orderCount = data?.payload?.data?.orderCount ?? 0
+  const servingTableCount = data?.payload?.data?.servingTableCount ?? 0
+  const revenueByDate = data?.payload?.data?.revenueByDate ?? []
+  const dishIndicator = data?.payload?.data?.dishIndicator ?? []
 
   const resetDateFilter = () => {
     setFromDate(initFromDate)

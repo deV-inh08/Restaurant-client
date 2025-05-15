@@ -27,7 +27,7 @@ export default async function Home() {
             <div className='relative'>
                 <span className='absolute top-0 left-0 w-full h-full bg-black opacity-50 z-10'></span>
                 <Image
-                    src='/banner.png'
+                    src="https://lzwstbdykbrsjbdpqqwb.supabase.co/storage/v1/object/public/uploads/f775190244f541d0a8ddb4c83ad68a97.jpg"
                     width={400}
                     height={200}
                     quality={100}

@@ -11,7 +11,7 @@ const nextConfig: NextConfig = {
     },
   },
   images: {
-    domains: ['localhost', 'www.google.com'], // 👈 Thêm dòng này
+    domains: ['lzwstbdykbrsjbdpqqwb.supabase.co', 'www.google.com'], // 👈 Thêm dòng này
   },
 };
 const withNextIntl = createNextIntlPlugin();
