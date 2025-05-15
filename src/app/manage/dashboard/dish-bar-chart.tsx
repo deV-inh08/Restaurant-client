@@ -198,7 +198,6 @@ export function DishBarChart({
         }
       }),
     [chartData])
-  console.log(chartDateColors)
   return (
     <Card>
       <CardHeader>

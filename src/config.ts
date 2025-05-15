@@ -6,7 +6,6 @@ const configSchema = z.object({
     NEXT_PUBLIC_URL: z.string()
 })
 
-console.log('test env', process.env.NEXT_PUBLIC_API_ENDPOINT)
 
 
 const configProject = configSchema.safeParse({
